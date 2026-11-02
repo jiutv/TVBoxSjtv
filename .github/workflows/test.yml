@@ -1,41 +1,36 @@
 name: Build & Release TVBoxOS Mobile
 
+permissions:
+  contents: write
+
 on:
   push:
-    branches:
-      - main
-      - 'trae/**'
+    branches: [main]
   workflow_dispatch:
     inputs:
       rebuild:
-        description: '忽略上次构建记录，强制重新构建'
-        required: false
-        type: boolean
-      skip_release:
-        description: '构建后不创建 Release（只出 Artifact）'
+        description: '忽略构建记录，强制重新构建'
         required: false
         type: boolean
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    outputs:
-      tag_name: ${{ steps.version.outputs.tag_name }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Generate version tag
-        id: version
+      - name: Generate tag
+        id: tag
         run: |
           TAG="$(git log --date=format:'%Y%m%d-%H%M' --pretty=format:'%cd' -1)"
           SHORT="$(git rev-parse --short HEAD)"
-          echo "tag_name=$TAG-$SHORT" >> $GITHUB_OUTPUT
-          echo "SUFFIX=-$TAG-$SHORT" >> $GITHUB_ENV
+          echo "tag=$TAG-$SHORT" >> $GITHUB_OUTPUT
+          echo "tag=$TAG-$SHORT" >> $GITHUB_ENV
 
-      - uses: actions/setup-java@v4
+      - name: Setup Java 17 (for sdkmanager)
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -43,10 +38,52 @@ jobs:
       - name: Setup Android SDK
         run: |
           export PATH=$PATH:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools
-          yes | sdkmanager --licenses || true
-          sdkmanager "platforms;android-33" "build-tools;33.0.2"
+          yes | sdkmanager --licenses
+          sdkmanager "platforms;android-33" "build-tools;30.0.3" "build-tools;33.0.2"
 
-      - uses: gradle/actions/setup-gradle@v3
+      - name: Setup Java 11 (for Gradle build)
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '11'
+
+      - name: Pre-download Gradle 7.5 (mirror fallback)
+        run: |
+          GRADLE_VER="gradle-7.5-bin"
+          GRADLE_HOME="$HOME/.gradle/wrapper/dists/$GRADLE_VER"
+          HASH_DIR=$(echo -n "https://services.gradle.org/distributions/$GRADLE_VER.zip" | sha256sum | cut -c1-8)
+          TARGET="$GRADLE_HOME/$HASH_DIR"
+          if [ -d "$TARGET/gradle-7.5" ]; then
+            echo "✅ Gradle 7.5 已存在"
+          else
+            mkdir -p "$TARGET"
+            cd "$TARGET"
+            for url in \
+              "https://services.gradle.org/distributions/$GRADLE_VER.zip" \
+              "https://mirrors.cloud.tencent.com/gradle/$GRADLE_VER.zip" \
+              "https://mirrors.tuna.tsinghua.edu.cn/gradle/$GRADLE_VER.zip" \
+              "https://mirrors.huaweicloud.com/gradle/$GRADLE_VER.zip"; do
+              echo "  trying: $url"
+              if curl -fsSL --connect-timeout 10 -o "$GRADLE_VER.zip" "$url"; then
+                echo "✅ download ok: $url"
+                break
+              fi
+            done
+            unzip -q "$GRADLE_VER.zip"
+            rm -f "$GRADLE_VER.zip"
+            echo "✅ Gradle 7.5 ready"
+          fi
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.m2/repository
+          key: gradle-build-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
+          restore-keys: |
+            gradle-build-${{ runner.os }}-
+
+      - uses: gradle/actions/setup-gradle@v4
 
       - name: Prepare build
         run: |
@@ -59,82 +96,84 @@ jobs:
             echo "RELEASE_STORE_PASSWORD=TVBoxOSC"
             echo "RELEASE_KEY_PASSWORD=TVBoxOSC"
           } >> gradle.properties
-          sed -i "s/versionName '\([^']*\)'/versionName '\1$SUFFIX'/g" app/build.gradle
-          [ -f pyramid/build.gradle ] && sed -i 's|buildPython("[^"]*")|buildPython("/usr/bin/python3")|' pyramid/build.gradle || true
+          sed -i '/^#org.gradle.jvmargs/s/^#//' gradle.properties
+          sed -i "s/versionName '\([^']*\)'/versionName '\1-$tag'/g" app/build.gradle
+          echo "local.properties:" && cat local.properties
+          echo "=== gradle.properties tail ===" && tail -10 gradle.properties
 
-      - name: Build APKs (one Gradle invocation)
+      - name: Build With Gradle
         run: |
           chmod +x gradlew
-          ./gradlew \
-            assembleJavaRelease \
-            assembleJava32Release \
-            assembleJava64Release \
-            assemblePythonRelease \
-            assemblePython32Release \
-            assemblePython64Release \
-            --no-daemon --stacktrace --console=plain
-
-      - name: Collect APKs
-        run: |
-          rm -rf apk/
-          mkdir -p apk/
-          # Gradle 标准输出路径 —— 直接列出来给你看
-          echo "=== Gradle 输出树 (app/build/outputs/apk) ==="
-          find app/build/outputs/apk -type f 2>/dev/null || echo "(no outputs dir yet)"
-          echo ""
-          echo "=== 全仓库搜 *.apk ==="
-          find . -not -path "./.git/*" -not -path "./apk/*" -name "*.apk" 2>/dev/null
-          echo ""
-          # 精准 cp：按 productFlavor 一个个找
-          APK_COUNT=0
-          for FLAVOR in java java32 java64 python python32 python64; do
-            SRC="app/build/outputs/apk/${FLAVOR}/release/TVBox_release-${FLAVOR}.apk"
-            NEW="apk/TVBox_${SUFFIX}-${FLAVOR}.apk"
-            if [ -f "$SRC" ]; then
-              cp "$SRC" "$NEW"
-              APK_COUNT=$((APK_COUNT+1))
-              echo "✅ $FLAVOR: cp $SRC → $NEW"
+          mkdir -p build_logs
+          FAILED=0
+          for flavor in java java32 java64; do
+            echo ""
+            echo "===== Building flavor: $flavor ====="
+            if ./gradlew "assemble${flavor^}Release" \
+              --no-build-cache --stacktrace --warning-mode all > "build_logs/${flavor}.log" 2>&1; then
+              echo "✅ $flavor OK"
             else
-              # fallback —— 在 apk 目录下搜任意包含该 flavor 名的 apk
-              FALLBACK=$(find app/build/outputs/apk -type f -name "*${FLAVOR}*.apk" 2>/dev/null | head -1)
-              if [ -n "$FALLBACK" ] && [ -f "$FALLBACK" ]; then
-                cp "$FALLBACK" "$NEW"
-                APK_COUNT=$((APK_COUNT+1))
-                echo "🔄 $FLAVOR (fallback): cp $FALLBACK → $NEW"
-              else
-                echo "❌ $FLAVOR: APK not found at $SRC"
-              fi
+              echo "❌ $flavor FAILED"
+              echo "=== key errors ==="
+              grep -nE "error:|FAILURE|What went wrong|Execution failed|Could not resolve|cannot find symbol" "build_logs/${flavor}.log" | head -30
+              echo "=== tail -100 ==="
+              tail -100 "build_logs/${flavor}.log"
+              FAILED=$((FAILED+1))
             fi
           done
           echo ""
-          echo "=== Final apk/ ==="
-          ls -lh apk/
-          echo "APK_COUNT=$APK_COUNT"
-          [ $APK_COUNT -gt 0 ] || exit 1
+          echo "===== RESULT: $((3-FAILED))/3 ====="
+          [ "$FAILED" -eq 0 ] || exit 1
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Prepare App (Collect APKs)
+        run: |
+          rm -rf apk/
+          mkdir -p apk/
+          echo "===== 🔍 Searching APKs ====="
+          echo "=== app/build/outputs/apk ==="
+          find app/build/outputs/apk -name "*.apk" -print 2>/dev/null || echo "(no outputs dir)"
+          echo "=== find ~ ==="
+          find ~ -name "*release*.apk" -print 2>/dev/null
+          echo "=== find . ==="
+          find . -name "*.apk" -print 2>/dev/null
+          echo ""
+          echo "===== 开始复制 ====="
+          for file in $(find app/build/outputs/apk -name "*.apk" -print 2>/dev/null; find ~ -name "*release*.apk" -print 2>/dev/null); do
+            base=$(basename "$file")
+            echo "  找到: $file  →  base=$base"
+            if [[ "$base" == TVBox_* ]]; then
+              new_base=$(echo "$base" | sed "s/release/$tag/")
+            else
+              new_base="TVBox_$tag.apk"
+            fi
+            cp "$file" "apk/$new_base"
+          done
+          echo ""
+          echo "===== apk/ 最终 ====="
+          ls -la apk/
+          APK_COUNT=$(ls apk/*.apk 2>/dev/null | wc -l)
+          echo "APK_COUNT=$APK_COUNT"
+          [ "$APK_COUNT" -gt 0 ] || exit 1
+
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: TVBoxOS-Mobile-${{ steps.version.outputs.tag_name }}
-          path: apk/*
-          if-no-files-found: error
+          name: TVBoxOS-Mobile-$tag
+          path: |
+            apk/*
+            build_logs/
+          if-no-files-found: warn
 
       - name: Create GitHub Release
-        if: ${{ inputs.skip_release != 'true' }}
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: mobile-${{ steps.version.outputs.tag_name }}
-          name: TVBoxOS Mobile v${{ steps.version.outputs.tag_name }}
-          files: apk/*
-          generate_release_notes: true
-          prerelease: false
-          body: |
-            ## TVBoxOS 手机版 Compose 改造 —— 阶段 0 构建
-
-            - **提交**: `${{ github.sha }}`
-            - **构建**: GitHub Actions (ubuntu-latest + JDK 17 + Android SDK 33)
-            - **Flavors**: java / java32 / java64 / python / python32 / python64
-            - **minSdk**: 21
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.rebuild == true }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -la apk/
+          gh release create "mobile-$tag" apk/*.apk \
+            --title "TVBoxOS Mobile $tag" \
+            --target "${{ github.sha }}" \
+            --latest
 
   cleanup:
     if: always()
