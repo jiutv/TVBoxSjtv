@@ -118,51 +118,55 @@ jobs:
             fi
           done
 
-          # ===== Phase 2: 全局搜 APK (搜遍所有可能位置) =====
+          # ===== Phase 2: 全局搜 APK + 额外诊断 =====
           echo ""
-          echo "========== 🔍 FIND ALL APKS =========="
-          rm -f apk_paths.txt
-          # 标准 Gradle 路径
-          find app/build/outputs/apk -type f -name "*.apk" 2>/dev/null | tee -a apk_paths.txt
-          # fallback —— 全仓库搜
-          find . -maxdepth 6 -type f -name "*.apk" -not -path "./.git/*" -not -path "./apk/*" 2>/dev/null | tee -a apk_paths.txt
-          echo "=== apk_paths.txt contents ==="
-          cat apk_paths.txt || echo "(empty)"
-          echo "=== apk_paths.txt count: $(wc -l < apk_paths.txt 2>/dev/null || echo 0) ==="
+          echo "========== 🔍 FIND ALL APKS ==========" | tee -a build_summary.txt
+          echo "--- tree app/build/outputs/apk ---" | tee -a build_summary.txt
+          find app/build/outputs -type f -print 2>/dev/null | tee -a build_summary.txt
+          echo "--- all apk in repo (maxdepth 8, 除 .git) ---" | tee -a build_summary.txt
+          find . -maxdepth 8 -type f -name "*.apk" -not -path "./.git/*" 2>/dev/null | tee apk_paths.txt | tee -a build_summary.txt
+          echo "" | tee -a build_summary.txt
+          echo "=== apk_paths.txt contents ===" | tee -a build_summary.txt
+          cat apk_paths.txt 2>/dev/null | tee -a build_summary.txt || echo "(empty)" | tee -a build_summary.txt
+          echo "=== apk_paths.txt count: $(wc -l < apk_paths.txt 2>/dev/null || echo 0) ===" | tee -a build_summary.txt
+
+          # 也列一下所有 flavor build 目录
+          echo "--- list app/build/intermediates ---" | tee -a build_summary.txt
+          find app/build -maxdepth 4 -name "outputs" -type d 2>/dev/null | tee -a build_summary.txt || true
 
           # ===== Phase 3: 复制 + 重命名 =====
           rm -rf apk/
           mkdir -p apk/
           SUFFIX="${{ steps.version.outputs.tag_name }}"
           cp_n=0
-          while IFS= read -r src; do
-            [ -z "$src" ] && continue
-            [ ! -f "$src" ] && continue
+          # 先按标准 Gradle 命名找（更精准）
+          find app/build/outputs/apk -type f -name "*.apk" 2>/dev/null | while IFS= read -r src; do
             base=$(basename "$src")
             new=$(echo "$base" | sed "s/release/$SUFFIX/")
             if cp "$src" "apk/$new" 2>/dev/null; then
-              cp_n=$((cp_n+1))
-              echo "✅ COPY: $src → apk/$new"
+              echo "✅ COPY: $src → apk/$new" | tee -a build_summary.txt
             else
-              echo "❌ COPY FAIL: $src"
+              echo "❌ COPY FAIL: $src" | tee -a build_summary.txt
             fi
-          done < apk_paths.txt
-          echo ""
-          echo "========== 📂 FINAL apk/ =========="
-          ls -lh apk/ || echo "(empty)"
-          echo ""
-          echo "========== 📋 FAILED=$FAILED  APK_COUNT=$cp_n =========="
-          if [ $cp_n -eq 0 ]; then
-            echo "❌❌❌ 零 APK！退出"
-            exit 1
-          fi
+          done
+          cp_n=$(ls apk/ 2>/dev/null | wc -l)
+          echo "" | tee -a build_summary.txt
+          echo "========== 📂 FINAL apk/ (cp_n=$cp_n) ==========" | tee -a build_summary.txt
+          ls -lh apk/ 2>/dev/null | tee -a build_summary.txt || echo "(empty)" | tee -a build_summary.txt
+          echo "" | tee -a build_summary.txt
+          echo "========== 📋 FAILED=$FAILED  APK_COUNT=$cp_n ==========" | tee -a build_summary.txt
+          # 这里永远 exit 0 —— 让 Upload Artifact 根据 if-no-files-found: error 来决定成败
+          exit 0
 
       - name: Upload Build Logs (always)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: build-logs-${{ steps.version.outputs.tag_name }}
-          path: build_*.log
+          path: |
+            build_*.log
+            build_summary.txt
+            apk_paths.txt
           if-no-files-found: warn
 
       - name: Upload Artifact
