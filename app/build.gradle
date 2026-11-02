@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 33
@@ -94,6 +95,8 @@ android {
         python64 {
             java.srcDirs += 'src/python/java'
         }
+        // Compose / Kotlin sources live alongside Java in src/main/java
+        main.java.srcDirs += 'src/main/java'
     }
 
     buildTypes {
@@ -126,16 +129,21 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.8'
+    }
+
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
-//    dexOptions {
-//        javaMaxHeapSize "4g"
-//        additionalParameters += '--multi-dex'
-//        additionalParameters += '--set-max-idx-number=48000'
-//        additionalParameters += '--minimal-main-dex'
-//    }
 }
 
 repositories {
@@ -157,9 +165,21 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-//    implementation files('libs/thunder.jar')
-//    implementation files('libs/commons-lang3-3.12.0.jar')
 
+    // Jetpack Compose —— 手机 UI 层用 Compose，底层不动
+    implementation platform('androidx.compose:compose-bom:2023.06.00')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.material:material'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.material:material-icons-extended'
+    implementation 'androidx.activity:activity-compose:1.7.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2'
+    implementation 'androidx.navigation:navigation-compose:2.6.0'
+    implementation 'io.coil-kt:coil-compose:2.3.0'
+    implementation 'com.google.accompanist:accompanist-systemuicontroller:0.30.1'
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.11'
     annotationProcessor 'androidx.room:room-compiler:2.3.0'
@@ -189,6 +209,7 @@ dependencies {
 
     implementation 'com.lzy.net:okgo:3.0.4'
     // implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
+    // tv-recyclerview 过渡保留（旧 Java Activity 仍有编译依赖），阶段 1-3 全部 Compose 化后彻底移除
     implementation 'com.owen:tv-recyclerview:3.0.0'
 
     implementation 'com.github.getActivity:XXPermissions:13.6'
@@ -198,8 +219,6 @@ dependencies {
     implementation 'com.googlecode.juniversalchardet:juniversalchardet:1.0.3'
     //支持http3
     implementation ('com.google.net.cronet:cronet-okhttp:0.1.0')
-//    implementation 'com.google.android.gms:play-services-cronet:18.0.1'
     implementation ('org.chromium.net:cronet-embedded:101.4951.41')
     implementation 'org.brotli:dec:0.1.2'
 }
-
