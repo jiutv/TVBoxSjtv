@@ -110,16 +110,35 @@ jobs:
         run: |
           rm -rf apk/
           mkdir -p apk/
-          # 找所有 release apk，只收集 TVBox_ 开头的
-          find ~ -name "TVBox_*release*.apk" -print | while read -r file; do
+          echo "=== Searching for APKs ==="
+          # 先看 Gradle 标准输出目录
+          echo "--- app/build/outputs/apk tree ---"
+          find app/build/outputs -type f -name "*.apk" 2>/dev/null || echo "no apk in app/build/outputs"
+          echo "--- fallback find ~ ---"
+          find ~ -name "*.apk" -print 2>/dev/null | head -20 || echo "no apk in ~"
+          echo "=== copying APKs ==="
+          # 优先收集 app/build/outputs/apk/*/release/ 下的
+          for file in app/build/outputs/apk/*/release/*.apk; do
+            [ -f "$file" ] || continue
             base=$(basename "$file")
-            # 把文件名里的 "release" 替换成 "jiutv_TAG"
             new_base=$(echo "$base" | sed "s/release/${{ env.USER_NAME }}_${{ steps.version.outputs.tag_name }}/")
-            mv "$file" "apk/$new_base"
+            cp "$file" "apk/$new_base"
             echo "collected: apk/$new_base"
+          done
+          # 兜底：扫描 ~
+          find ~ -name "TVBox_*release*.apk" -print 2>/dev/null | while read -r file; do
+            base=$(basename "$file")
+            new_base=$(echo "$base" | sed "s/release/${{ env.USER_NAME }}_${{ steps.version.outputs.tag_name }}/")
+            cp "$file" "apk/$new_base"
+            echo "collected-fallback: apk/$new_base"
           done
           echo "=== final apk dir ==="
           ls -lh apk/ || echo "no apk found!"
+          if [ -z "$(ls apk/ 2>/dev/null)" ]; then
+            echo "ERROR: no APK produced!"
+            find . -name "*.apk" -print 2>/dev/null | head -20
+            exit 1
+          fi
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
