@@ -78,8 +78,8 @@ jobs:
       - name: Patch versionName with build tag
         run: |
           # 把 app/build.gradle 里 versionName '1.0.0' 改成带 tag 的版本名
-          TAG="$TAG"
-          sed -i "s/versionName '\([^']*\)'/versionName '\1-$TAG'/g" app/build.gradle
+          # $versionNameSuffix 已在上一步 echo >> $GITHUB_ENV，形如 -20261103-0330-abcdefg
+          sed -i "s/versionName '\([^']*\)'/versionName '\1$versionNameSuffix'/g" app/build.gradle
           echo "=== patched versionName ==="
           grep -n "versionName" app/build.gradle
 

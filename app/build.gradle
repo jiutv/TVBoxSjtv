@@ -199,7 +199,7 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.7.2'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2'
     implementation 'androidx.navigation:navigation-compose:2.6.0'
-    implementation 'io.coil-kt:coil-compose:2.3.0'
+    // io.coil-kt:coil-compose 暂未启用 —— Phase 1 (HomeScreen) 需要图片加载时再加，避免 Manifest minSdk 19 冲突
     implementation 'com.google.accompanist:accompanist-systemuicontroller:0.30.1'
 
     implementation 'com.squareup.okhttp3:okhttp:3.12.11'
