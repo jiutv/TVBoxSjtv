@@ -2,7 +2,9 @@ name: Build & Release TVBoxOS Mobile
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'trae/**'
   workflow_dispatch:
     inputs:
       rebuild:
