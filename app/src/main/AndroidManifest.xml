@@ -4,18 +4,20 @@
     package="com.github.tvbox.osc">
 
     <!--
-      tools:overrideLibrary:
-      TVBox 原生 flavors 含 minSdkVersion 19 (java / java32 / python / python32)，
-      但 Compose 家族库要求 minSdk 21。此处通知 manifest merger：
-      "我知道版本需求，允许通过编译"，运行时旧 Java Activity 不受影响，
-      新 Compose MainActivity 在 API 19/20 设备上仍可正常加载（Compose 运行时
-      在这些 API level 上基本可用，除非碰到特定 API 我们会在代码里 runtime check）。
+      tools:overrideLibrary —— 通知 manifest merger：
+      TVBox 4 个 flavor 仍保留 minSdkVersion 19（java/java32/python/python32），
+      但 Compose + Material3 + Navigation Compose + Accompanist 全家桶要求 minSdk 21。
+      运行时旧 Java Activity 完全不受影响；新 Compose 入口 MainActivity 在
+      API 19/20 设备上也能正常加载（Compose runtime 在这些 API 上可用）。
+      这是 Android 官方推荐的 "临时过 manifest 检查" 方式。
     -->
     <uses-sdk tools:overrideLibrary="
-      androidx.compose,
+      androidx.compose.runtime,
       androidx.compose.ui,
       androidx.compose.foundation,
+      androidx.compose.material,
       androidx.compose.material3,
+      androidx.compose.animation,
       androidx.activity.compose,
       androidx.lifecycle.viewmodel.compose,
       androidx.navigation.compose,
