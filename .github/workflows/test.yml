@@ -110,14 +110,16 @@ jobs:
             echo ""
             echo "===== Building flavor: $flavor ====="
             if ./gradlew "assemble${flavor^}Release" \
-              --no-build-cache --stacktrace --warning-mode all > "build_logs/${flavor}.log" 2>&1; then
+              --no-build-cache --stacktrace --warning-mode all 2>&1 | tee "build_logs/${flavor}.log" | grep -E "BUILD SUCCESSFUL|BUILD FAILED" | tail -1; then
               echo "✅ $flavor OK"
             else
               echo "❌ $flavor FAILED"
-              echo "=== key errors ==="
-              grep -nE "error:|FAILURE|What went wrong|Execution failed|Could not resolve|cannot find symbol" "build_logs/${flavor}.log" | head -30
-              echo "=== tail -100 ==="
-              tail -100 "build_logs/${flavor}.log"
+              echo ""
+              echo "=== 🚨 REAL KOTLIN ERRORS (e: lines) ==="
+              grep -nE "^e:| error:|^w:" "build_logs/${flavor}.log" | head -80 || echo "(no e: lines found)"
+              echo ""
+              echo "=== 🚨 Last 200 lines of log ==="
+              tail -200 "build_logs/${flavor}.log"
               FAILED=$((FAILED+1))
             fi
           done

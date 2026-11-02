@@ -3,6 +3,8 @@ package com.github.tvbox.osc.ui.screen.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import android.app.Activity
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,7 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalActivity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -98,7 +100,8 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
-    val activity = LocalActivity.current ?: return
+    val context = LocalContext.current
+    val activity = context as? Activity ?: return
 
     // 初始化 —— 只调一次
     LaunchedEffect(Unit) {
@@ -354,7 +357,7 @@ fun VideoCard(
         ) {
             if (!video.pic.isNullOrEmpty()) {
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalActivity.current!!)
+                    model = ImageRequest.Builder(context)
                         .data(video.pic)
                         .crossfade(true)
                         .build(),
