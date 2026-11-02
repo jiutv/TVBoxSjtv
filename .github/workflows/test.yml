@@ -106,7 +106,7 @@ jobs:
           chmod +x gradlew
           mkdir -p build_logs
           FAILED=0
-          for flavor in java java32 java64; do
+          for flavor in java java32 java64 python python32 python64; do
             echo ""
             echo "===== Building flavor: $flavor ====="
             if ./gradlew "assemble${flavor^}Release" \
@@ -122,7 +122,7 @@ jobs:
             fi
           done
           echo ""
-          echo "===== RESULT: $((3-FAILED))/3 ====="
+          echo "===== RESULT: $((6-FAILED))/6 ====="
           [ "$FAILED" -eq 0 ] || exit 1
 
       - name: Prepare App (Collect APKs)
