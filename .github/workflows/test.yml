@@ -99,44 +99,62 @@ jobs:
       - name: Build all release APKs
         run: |
           chmod +x gradlew
-          # 构建全部 flavors 的 release 包
-          ./gradlew assembleRelease \
+          # 显式构建全部 6 个 flavors 的 release
+          # 使用 set -o pipefail 保证 gradle 失败时 shell exit code 不被 tail 覆盖
+          set -o pipefail
+          ./gradlew \
+            assembleJavaRelease \
+            assembleJava32Release \
+            assembleJava64Release \
+            assemblePythonRelease \
+            assemblePython32Release \
+            assemblePython64Release \
             --build-cache \
             --stacktrace \
             --no-daemon \
-            2>&1 | tail -200
+            2>&1 | tee build.log | tail -200
+          EXIT=${PIPESTATUS[0]}
+          echo "=== gradle exit code: $EXIT ==="
+          if [ "$EXIT" -ne 0 ]; then
+            echo "=== FULL BUILD LOG (last 100 lines) ==="
+            tail -100 build.log
+            exit $EXIT
+          fi
+          echo "=== APK files produced ==="
+          find app/build/outputs/apk -type f -name "*.apk" -print 2>/dev/null || echo "no apk in outputs"
+          echo "=== all apk in repo ==="
+          find . -name "*.apk" -print 2>/dev/null | head -20 || echo "no apk anywhere"
 
       - name: Collect APK artifacts
         run: |
           rm -rf apk/
           mkdir -p apk/
           echo "=== Searching for APKs ==="
-          # 先看 Gradle 标准输出目录
-          echo "--- app/build/outputs/apk tree ---"
-          find app/build/outputs -type f -name "*.apk" 2>/dev/null || echo "no apk in app/build/outputs"
-          echo "--- fallback find ~ ---"
-          find ~ -name "*.apk" -print 2>/dev/null | head -20 || echo "no apk in ~"
-          echo "=== copying APKs ==="
-          # 优先收集 app/build/outputs/apk/*/release/ 下的
-          for file in app/build/outputs/apk/*/release/*.apk; do
-            [ -f "$file" ] || continue
+          echo "--- all apk under app/build/outputs/apk ---"
+          find app/build/outputs/apk -type f -name "*.apk" 2>/dev/null || echo "no apk dir yet"
+          echo "--- all apk in repo (including fallback) ---"
+          find . -maxdepth 4 -name "*.apk" -print 2>/dev/null | head -30 || echo "no apk anywhere"
+          echo "=== collecting all APKs ==="
+          # 扫描所有位置上的 apk
+          find . -maxdepth 5 -type f -name "*.apk" -not -path "./apk/*" -print | while read -r file; do
             base=$(basename "$file")
-            new_base=$(echo "$base" | sed "s/release/${{ env.USER_NAME }}_${{ steps.version.outputs.tag_name }}/")
-            cp "$file" "apk/$new_base"
-            echo "collected: apk/$new_base"
-          done
-          # 兜底：扫描 ~
-          find ~ -name "TVBox_*release*.apk" -print 2>/dev/null | while read -r file; do
-            base=$(basename "$file")
-            new_base=$(echo "$base" | sed "s/release/${{ env.USER_NAME }}_${{ steps.version.outputs.tag_name }}/")
-            cp "$file" "apk/$new_base"
-            echo "collected-fallback: apk/$new_base"
+            # 跳过非 TVBox 产物，只拿我们的 flavor release
+            case "$base" in
+              TVBox_release-*.apk)
+                new_base=$(echo "$base" | sed "s/release/${{ env.USER_NAME }}_${{ steps.version.outputs.tag_name }}/")
+                cp "$file" "apk/$new_base"
+                echo "✅ collected: apk/$new_base"
+                ;;
+              *)
+                echo "⏭ skipped: $base"
+                ;;
+            esac
           done
           echo "=== final apk dir ==="
-          ls -lh apk/ || echo "no apk found!"
+          ls -lh apk/ 2>/dev/null || true
           if [ -z "$(ls apk/ 2>/dev/null)" ]; then
-            echo "ERROR: no APK produced!"
-            find . -name "*.apk" -print 2>/dev/null | head -20
+            echo "❌ ERROR: no APK produced! Build log tail:"
+            tail -80 build.log 2>/dev/null || true
             exit 1
           fi
 
