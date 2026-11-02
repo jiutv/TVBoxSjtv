@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.github.tvbox.osc">
-
-    <!--
-      tools:overrideLibrary —— 通知 manifest merger：
-      TVBox 4 个 flavor 仍保留 minSdkVersion 19（java/java32/python/python32），
-      但 Compose + Material3 + Navigation Compose + Accompanist 全家桶要求 minSdk 21。
-      运行时旧 Java Activity 完全不受影响；新 Compose 入口 MainActivity 在
-      API 19/20 设备上也能正常加载（Compose runtime 在这些 API 上可用）。
-      这是 Android 官方推荐的 "临时过 manifest 检查" 方式。
-    -->
-    <uses-sdk tools:overrideLibrary="
-      androidx.compose.runtime,
-      androidx.compose.ui,
-      androidx.compose.foundation,
-      androidx.compose.material,
-      androidx.compose.material3,
-      androidx.compose.animation,
-      androidx.activity.compose,
-      androidx.lifecycle.viewmodel.compose,
-      androidx.navigation.compose,
-      com.google.accompanist.systemuicontroller,
-      io.coil.kt.coil.compose
-    " />
 
     <uses-feature
         android:name="android.software.leanback"
