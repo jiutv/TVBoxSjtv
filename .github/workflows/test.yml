@@ -23,9 +23,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     outputs:
       tag_name: ${{ steps.version.outputs.tag_name }}
+      build_ok: ${{ steps.final.outputs.build_ok }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,8 +36,8 @@ jobs:
       - name: Generate version tag
         id: version
         run: |
-          TAG="$(git log --date=format:'%Y%m%d-%H%M' --pretty=format:'%cd' -1)"
           SHORT="$(git rev-parse --short HEAD)"
+          TAG="$(git log --date=format:'%Y%m%d-%H%M' --pretty=format:'%cd' -1)"
           echo "tag_name=$TAG-$SHORT" >> $GITHUB_OUTPUT
           echo "versionNameSuffix=-$TAG-$SHORT" >> $GITHUB_ENV
 
@@ -56,15 +57,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Generate local.properties
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          cat local.properties
+        run: echo "sdk.dir=${ANDROID_HOME}" > local.properties
 
-      - name: Apply signing config
+      - name: Apply signing + Patch versionName + Patch Python path
         run: |
-          # 把仓库自带的签名文件复制到 app/
+          # 签名
           cp .github/workflows/TVBoxOSC.jks app/TVBoxOSC.jks
-          # 在 gradle.properties 末尾追加 signing 属性
           {
             echo ""
             echo "RELEASE_STORE_FILE=./TVBoxOSC.jks"
@@ -72,36 +70,28 @@ jobs:
             echo "RELEASE_STORE_PASSWORD=TVBoxOSC"
             echo "RELEASE_KEY_PASSWORD=TVBoxOSC"
           } >> gradle.properties
-          echo "=== gradle.properties tail ==="
-          tail -10 gradle.properties
-
-      - name: Patch versionName with build tag
-        run: |
-          # 把 app/build.gradle 里 versionName '1.0.0' 改成带 tag 的版本名
-          # $versionNameSuffix 已在上一步 echo >> $GITHUB_ENV，形如 -20261103-0330-abcdefg
+          # 版本名
           sed -i "s/versionName '\([^']*\)'/versionName '\1$versionNameSuffix'/g" app/build.gradle
-          echo "=== patched versionName ==="
-          grep -n "versionName" app/build.gradle
-
-      - name: Patch Python path for Linux CI
-        run: |
-          # Chaquo Python 在 Linux runner 上需要显式指定 python3 路径
+          echo "📦 versionName patched → $(grep -m1 versionName app/build.gradle)"
+          # Python 路径
           if [ -f pyramid/build.gradle ]; then
             sed -i 's|buildPython("[^"]*")|buildPython("/usr/bin/python3")|' pyramid/build.gradle
+            echo "🐍 Python path patched → /usr/bin/python3"
           fi
 
       - name: Build environment info
         run: |
-          echo "Java:" && java -version 2>&1
-          echo "Python:" && python3 --version 2>&1 || echo "no python3"
-          echo "ANDROID_HOME=$ANDROID_HOME"
+          echo "=== Java ===" && java -version 2>&1
+          echo "=== Python ===" && python3 --version 2>&1 || echo "no python3"
+          echo "=== ANDROID_HOME ===" && ls $ANDROID_HOME/platforms/ 2>/dev/null; ls $ANDROID_HOME/build-tools/ 2>/dev/null
 
+      # ========= 核心构建 =========
       - name: Build all release APKs
+        id: gradle_build
+        continue-on-error: true
         run: |
           chmod +x gradlew
-          # 显式构建全部 6 个 flavors 的 release
-          # 使用 set -o pipefail 保证 gradle 失败时 shell exit code 不被 tail 覆盖
-          set -o pipefail
+          echo "🔨 START GRADLE BUILD $(date -Iseconds)"
           ./gradlew \
             assembleJavaRelease \
             assembleJava32Release \
@@ -109,64 +99,115 @@ jobs:
             assemblePythonRelease \
             assemblePython32Release \
             assemblePython64Release \
-            --build-cache \
-            --stacktrace \
             --no-daemon \
-            2>&1 | tee build.log | tail -200
-          EXIT=${PIPESTATUS[0]}
-          echo "=== gradle exit code: $EXIT ==="
-          if [ "$EXIT" -ne 0 ]; then
-            echo "=== FULL BUILD LOG (last 100 lines) ==="
-            tail -100 build.log
-            exit $EXIT
-          fi
-          echo "=== APK files produced ==="
-          find app/build/outputs/apk -type f -name "*.apk" -print 2>/dev/null || echo "no apk in outputs"
-          echo "=== all apk in repo ==="
-          find . -name "*.apk" -print 2>/dev/null | head -20 || echo "no apk anywhere"
+            --stacktrace \
+            --console=plain \
+            2>&1 | tee build.log
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "EXIT_CODE=$EXIT_CODE" >> gradle_exit.env
+          echo "🔚 GRADLE DONE exit=$EXIT_CODE  $(date -Iseconds)"
 
+      # ========= 诊断：自动提取关键错误 =========
+      - name: Extract build errors summary
+        run: |
+          echo "🔍 EXTRACTING BUILD ERRORS"
+          # 1) 关键错误行（含上下文）
+          {
+            echo "=== 🔴 GRADLE EXIT CODE: $(cat gradle_exit.env 2>/dev/null || echo 'unknown') ==="
+            echo ""
+            echo "=== 🔴 ALL ERROR LINES (grep -n -i -E 'error|fail|exception' build.log) ==="
+            grep -n -i -E '\b(error|fail)\b|Exception|FAILURE|' build.log 2>/dev/null | tail -100
+            echo ""
+            echo "=== 🧩 SPECIFIC KNOWN ERROR PATTERNS ==="
+            echo "--- Manifest merger ---"
+            grep -A3 -B1 -i "Manifest merger\|uses-sdk:minSdkVersion" build.log 2>/dev/null | head -40
+            echo "--- Compose / Kotlin compile ---"
+            grep -A2 -B1 -i "Unresolved reference\|e: file\|error:" build.log 2>/dev/null | head -60
+            echo "--- Resource error ---"
+            grep -A2 -B1 -i "AAPT:\|resource not found\|drawable" build.log 2>/dev/null | head -40
+          } > errors_summary.txt
+          echo ""
+          echo "========== ERRORS SUMMARY (full) =========="
+          cat errors_summary.txt
+          echo "==========================================="
+
+      # ========= 收集 APK =========
       - name: Collect APK artifacts
         run: |
           rm -rf apk/
           mkdir -p apk/
-          echo "=== Searching for APKs ==="
-          echo "--- all apk under app/build/outputs/apk ---"
-          find app/build/outputs/apk -type f -name "*.apk" 2>/dev/null || echo "no apk dir yet"
-          echo "--- all apk in repo (including fallback) ---"
-          find . -maxdepth 4 -name "*.apk" -print 2>/dev/null | head -30 || echo "no apk anywhere"
-          echo "=== collecting all APKs ==="
-          # 扫描所有位置上的 apk
-          find . -maxdepth 5 -type f -name "*.apk" -not -path "./apk/*" -print | while read -r file; do
-            base=$(basename "$file")
-            # 跳过非 TVBox 产物，只拿我们的 flavor release
+          echo "=== 🔎 APK LOCATION SCAN ==="
+          # Gradle 标准输出: app/build/outputs/apk/<flavor>/<type>/TVBox_<type>-<flavor>.apk
+          find app/build/outputs/apk -type f -name "*.apk" 2>/dev/null | tee apk_locations.txt || true
+          find player/build -type f -name "*.apk" 2>/dev/null >> apk_locations.txt || true
+          find . -maxdepth 6 -type f -name "*.apk" -not -path "./apk/*" -print 2>/dev/null | sort -u >> apk_locations.txt || true
+          cat apk_locations.txt
+          echo "=== 📦 COPYING ==="
+          cp_n=0
+          while read -r src; do
+            [ -z "$src" ] && continue
+            [ ! -f "$src" ] && continue
+            base=$(basename "$src")
+            # 只保留 TVBox_ 开头的 apk，其他跳过
             case "$base" in
-              TVBox_release-*.apk)
-                new_base=$(echo "$base" | sed "s/release/${{ env.USER_NAME }}_${{ steps.version.outputs.tag_name }}/")
-                cp "$file" "apk/$new_base"
-                echo "✅ collected: apk/$new_base"
+              TVBox_*.apk)
+                # 把文件名里的 "release" 替换成 "jiutv_TAG"
+                new=$(echo "$base" | sed "s/release/${{ env.USER_NAME }}_${{ steps.version.outputs.tag_name }}/")
+                cp "$src" "apk/$new" && cp_n=$((cp_n+1)) && echo "✅ $base → $new"
                 ;;
-              *)
-                echo "⏭ skipped: $base"
-                ;;
+              *) echo "⏭ skip: $base" ;;
             esac
-          done
-          echo "=== final apk dir ==="
-          ls -lh apk/ 2>/dev/null || true
-          if [ -z "$(ls apk/ 2>/dev/null)" ]; then
-            echo "❌ ERROR: no APK produced! Build log tail:"
-            tail -80 build.log 2>/dev/null || true
-            exit 1
-          fi
+          done < apk_locations.txt
+          echo "=== 📂 apk/ dir ==="
+          ls -lh apk/ || true
+          echo "APK_COUNT=$cp_n" > apk_count.env
 
-      - name: Upload Artifact
+      # ========= 上传构建诊断 (无论成败) =========
+      - name: Upload Build Diagnostics (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-diagnostics-${{ steps.version.outputs.tag_name }}
+          path: |
+            build.log
+            errors_summary.txt
+            apk_count.env
+            gradle_exit.env
+          if-no-files-found: warn
+
+      # ========= 上传 APK =========
+      - name: Upload APK Artifact
+        if: steps.gradle_build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: TVBoxOS-Mobile-${{ steps.version.outputs.tag_name }}
           path: apk/*
           if-no-files-found: error
 
+      # ========= 最终判断 =========
+      - name: Finalize
+        id: final
+        run: |
+          APK_COUNT=$(cat apk_count.env 2>/dev/null | grep -oP '\d+' || echo "0")
+          GRADLE_EXIT=$(cat gradle_exit.env 2>/dev/null | grep -oP '\d+' || echo "999")
+          echo "gradle_exit=$GRADLE_EXIT"
+          echo "apk_count=$APK_COUNT"
+          if [ "$GRADLE_EXIT" -eq 0 ] && [ "$APK_COUNT" -gt 0 ]; then
+            echo "✅ BUILD SUCCESS — $APK_COUNT APKs produced"
+            echo "build_ok=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ BUILD FAILED"
+            echo "   gradle exit = $GRADLE_EXIT (expected 0)"
+            echo "   apk count   = $APK_COUNT (expected > 0)"
+            echo ""
+            echo "📋 请下载 Artifact [build-diagnostics-${{ steps.version.outputs.tag_name }}] 查看完整日志"
+            echo "   或在 [errors_summary.txt] 里看关键错误摘要"
+            echo "build_ok=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
       - name: Create GitHub Release
-        if: ${{ inputs.skip_release != 'true' }}
+        if: steps.final.outputs.build_ok == 'true' && inputs.skip_release != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: mobile-${{ steps.version.outputs.tag_name }}
@@ -178,17 +219,18 @@ jobs:
             ## 📱 TVBoxOS 手机版 Compose 改造 —— 阶段 0 构建
 
             - **提交**: `${{ github.sha }}`
-            - **分支**: `main`
             - **构建**: GitHub Actions (ubuntu-latest + JDK 17 + Android SDK 33)
             - **打包全部 flavors**: java / java32 / java64 / python / python32 / python64
+            - **minSdk**: java/java32/python/python32=19 · java64/python64=21（通过 overrideLibrary 让 Compose 过 manifest）
 
             ### 阶段 0 已完成
-            - ✅ Jetpack Compose BOM 引入（2023.06.00 + Kotlin 1.8.22）
-            - ✅ 新增 `MainActivity.kt` + Material3 主题
+            - ✅ Kotlin 1.8.22 + Compose BOM 2023.06.00（material3 + foundation + navigation-compose + accompanist）
+            - ✅ 新增 `MainActivity.kt` + Material3 深色主题（对标 AVBox）
             - ✅ Manifest 全部 Activity 改 `sensorPortrait`
-            - ✅ 移除 LEANBACK_LAUNCHER、leanback required=true
-            - ✅ 旧 Activity 暂时保留 `enabled=false`（等阶段 1-3 全部 Compose 化后移除）
-            - ✅ tv-recyclerview 过渡保留（旧 Java Activity 编译依赖）
+            - ✅ 移除 LEANBACK_LAUNCHER / leanback required=true
+            - ✅ 旧 Activity 暂时保留 `enabled=false`（等阶段 1-3 Compose 化后删除）
+            - ✅ `tools:overrideLibrary` 覆盖 Compose 全家桶解决 minSdk 19 vs 21
+            - ✅ GitHub Actions 直接构建当前仓库 + 签名 + 打 Tag + 发 Release
 
             ### 后续阶段
             - 阶段 1: 首页 HomeScreen（ScrollableTabRow + Compose 网格）
@@ -196,6 +238,7 @@ jobs:
             - 阶段 3: 收藏 / 历史 / 设置 / 搜索 / 直播
 
   cleanup:
+    if: build.build_ok == 'true'
     needs: build
     runs-on: ubuntu-latest
     steps:
