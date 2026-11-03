@@ -2,6 +2,7 @@ name: Build & Release TVBoxOS Mobile
 
 permissions:
   contents: write
+  actions: write
 
 on:
   push:
