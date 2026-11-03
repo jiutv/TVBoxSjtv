@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -32,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.ui.screen.category.CategoryScreen
 import com.github.tvbox.osc.ui.screen.collect.CollectScreen
 import com.github.tvbox.osc.ui.screen.detail.DetailScreen
@@ -42,15 +46,54 @@ import com.github.tvbox.osc.ui.screen.profile.ProfileScreen
 import com.github.tvbox.osc.ui.screen.source.SourceConfigScreen
 import com.github.tvbox.osc.ui.theme.Colors
 import com.github.tvbox.osc.ui.theme.TVBoxTheme
+import com.orhanobut.hawk.Hawk
+import com.github.tvbox.osc.util.HawkConfig
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // === 初始化 ApiConfig（加载视频源配置） ===
+        initApiConfig()
+
         setContent {
             TVBoxTheme {
                 App()
             }
         }
+    }
+
+    private fun initApiConfig() {
+        val api = ApiConfig.get()
+        val apiUrl = Hawk.get(HawkConfig.API_URL, "")
+        if (apiUrl.isEmpty()) {
+            Log.w(TAG, "未设置 HawkConfig.API_URL，跳过 loadConfig")
+            return
+        }
+        Log.i(TAG, "开始加载视频源配置: $apiUrl")
+        lifecycleScope.launch {
+            api.loadConfig(
+                true,
+                object : ApiConfig.LoadConfigCallback {
+                    override fun notice(msg: String?) {
+                        Log.i(TAG, "loadConfig notice: $msg")
+                    }
+                    override fun error(msg: String?) {
+                        Log.e(TAG, "loadConfig error: $msg")
+                    }
+                    override fun success() {
+                        Log.i(TAG, "✅ loadConfig 成功，源数量: ${api.sourceBeanList.size}")
+                    }
+                },
+                this@MainActivity
+            )
+        }
+    }
+
+    companion object {
+        private const val TAG = "TVBoxOS"
     }
 }
 
@@ -124,7 +167,10 @@ private fun App() {
         ) {
             composable("home") {
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    HomeScreen(onVideoClick = { navController.navigate("detail/$it") })
+                    HomeScreen(
+                        onVideoClick = { navController.navigate("detail/$it") },
+                        onSourceConfigClick = { navController.navigate("source_config") }
+                    )
                 }
             }
             composable("category") {
@@ -146,6 +192,7 @@ private fun App() {
                 Box(modifier = Modifier.padding(innerPadding)) {
                     ProfileScreen(
                         onSourceConfigClick = { navController.navigate("source_config") },
+                        onHistoryClick = { navController.navigate("history") },
                         onCollectClick = {
                             navController.navigate("collect") {
                                 popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -153,7 +200,9 @@ private fun App() {
                                 restoreState = true
                             }
                         },
-                        onAboutClick = { }
+                        onPlaySettingClick = { navController.navigate("play_setting") },
+                        onUISettingClick = { navController.navigate("ui_setting") },
+                        onAboutClick = { navController.navigate("about") }
                     )
                 }
             }
@@ -176,8 +225,59 @@ private fun App() {
                 PlayScreen(title = title, onBack = { navController.popBackStack() })
             }
             composable("source_config") {
-                SourceConfigScreen(onBack = { navController.popBackStack() })
+                SourceConfigScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
+            composable("history") {
+                PlaceholderScreen("历史记录", onBack = { navController.popBackStack() })
+            }
+            composable("play_setting") {
+                PlaceholderScreen("播放设置", onBack = { navController.popBackStack() })
+            }
+            composable("ui_setting") {
+                PlaceholderScreen("界面设置", onBack = { navController.popBackStack() })
+            }
+            composable("about") {
+                PlaceholderScreen("关于", onBack = { navController.popBackStack() })
+            }
+        }
+    }
+}
+
+/** 占位页面 —— 临时用于打通路由，后续替换真实内容 */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PlaceholderScreen(
+    title: String,
+    onBack: () -> Unit
+) {
+    androidx.compose.foundation.layout.Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        androidx.compose.material3.TopAppBar(
+            title = { Text(title, color = Colors.TextPrimary) },
+            navigationIcon = {
+                androidx.compose.material3.IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.Default.Home, contentDescription = "返回",
+                        tint = Colors.TextPrimary
+                    )
+                }
+            },
+            colors = androidx.compose.material3.TopAppBarDefaults.topAppBarColors(
+                containerColor = Colors.Background
+            )
+        )
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = androidx.compose.ui.Alignment.Center
+        ) {
+            Text(
+                "$title — 功能开发中",
+                color = Colors.TextTertiary,
+                fontSize = 14.sp
+            )
         }
     }
 }

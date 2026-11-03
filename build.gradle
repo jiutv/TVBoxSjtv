@@ -1,13 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-        // 阿里云镜像优先 —— 包含 Maven Central + Gradle Plugin Portal + Google 的代理
-        maven { url "https://maven.aliyun.com/repository/gradle-plugin" }
-        maven { url "https://maven.aliyun.com/repository/google" }
-        maven { url "https://maven.aliyun.com/repository/central" }
+        // ⚠️ AGP 在 Google Maven，Kotlin Gradle Plugin 在 Gradle Plugin Portal
+        // 顺序：能通的镜像在前，容易 429/404 的在后
+        google()                                          // AGP 从这里拿 ✅
+        maven { url "https://repo.huaweicloud.com/repository/maven" }  // 华为云（代理 Google + Central）✅
+        maven { url "https://maven.aliyun.com/repository/google" }     // 阿里云 Google 镜像
+        maven { url "https://maven.aliyun.com/repository/central" }    // 阿里云 Central 镜像 ✅
         maven { url "https://maven.aliyun.com/repository/public" }
         maven { url "https://maven.aliyun.com/repository/releases" }
-        // 其他必需仓库
         maven { url "https://jitpack.io" }
         maven { url "https://storage.googleapis.com/r8-releases/raw" }
         maven {
@@ -15,10 +16,9 @@ buildscript {
             allowInsecureProtocol = true
         }
         maven { url "https://chaquo.com/maven" }
-        // 最后 fallback 到官方源（以防镜像缺失）
-        google()
-        mavenCentral()
+        // Gradle Plugin Portal（可能 429，放在最后）
         gradlePluginPortal()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
@@ -29,7 +29,9 @@ buildscript {
 
 allprojects {
     repositories {
-        // 阿里云镜像优先
+        // 运行时依赖仓库顺序（同上策略）
+        google()
+        maven { url "https://repo.huaweicloud.com/repository/maven" }
         maven { url "https://maven.aliyun.com/repository/google" }
         maven { url "https://maven.aliyun.com/repository/central" }
         maven { url "https://maven.aliyun.com/repository/public" }
@@ -40,8 +42,6 @@ allprojects {
         }
         maven { url "https://jitpack.io" }
         gradlePluginPortal()
-        // Fallback 官方源
-        google()
         mavenCentral()
     }
 }

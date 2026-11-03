@@ -54,6 +54,7 @@ import com.github.tvbox.osc.ui.theme.Colors
 fun HomeScreen(
     onVideoClick: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
+    onSourceConfigClick: () -> Unit = {},
     viewModel: HomeViewModel = viewModel()
 ) {
     val categories = viewModel.categories.collectAsState(initial = emptyList()).value
@@ -61,6 +62,7 @@ fun HomeScreen(
     val sources = viewModel.sources.collectAsState(initial = emptyList()).value
     val currentSourceName = viewModel.currentSourceName.collectAsState(initial = "").value
     val loading = viewModel.loading.collectAsState(initial = false).value
+    val sourceConfigured = viewModel.sourceConfigured.collectAsState(initial = true).value
 
     LaunchedEffect(Unit) { viewModel.init() }
 
@@ -194,7 +196,33 @@ fun HomeScreen(
             }
 
             // 视频网格 —— 真实数据
-            if (videos.isNotEmpty() || loading) {
+            if (!sourceConfigured) {
+                // 未配置源 —— 引导用户去设置
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            "⚠️ 尚未配置视频源",
+                            color = Colors.TextSecondary,
+                            fontSize = 15.sp
+                        )
+                        Text(
+                            "请先在「源配置」中添加视频源地址",
+                            color = Colors.TextTertiary,
+                            fontSize = 13.sp,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        androidx.compose.material3.TextButton(
+                            onClick = onSourceConfigClick,
+                            modifier = Modifier.padding(top = 12.dp)
+                        ) {
+                            Text("去配置视频源", color = Colors.Accent)
+                        }
+                    }
+                }
+            } else if (videos.isNotEmpty() || loading) {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(3),
                     contentPadding = PaddingValues(

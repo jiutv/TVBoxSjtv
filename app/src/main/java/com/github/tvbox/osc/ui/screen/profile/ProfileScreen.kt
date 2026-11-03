@@ -45,14 +45,16 @@ fun ProfileScreen(
     onSourceConfigClick: () -> Unit = {},
     onHistoryClick: () -> Unit = {},
     onCollectClick: () -> Unit = {},
+    onPlaySettingClick: () -> Unit = {},
+    onUISettingClick: () -> Unit = {},
     onAboutClick: () -> Unit = {}
 ) {
     val settingsItems = listOf(
         SettingItem(Icons.Default.History, "源配置", "管理视频源", onSourceConfigClick),
         SettingItem(Icons.Default.History, "历史记录", "观看历史", onHistoryClick),
         SettingItem(Icons.Default.History, "收藏管理", "收藏的影片", onCollectClick),
-        SettingItem(Icons.Default.Settings, "播放设置", "播放器、解码、清晰度", {}),
-        SettingItem(Icons.Default.Settings, "界面设置", "主题、字体、布局", {}),
+        SettingItem(Icons.Default.Settings, "播放设置", "播放器、解码、清晰度", onPlaySettingClick),
+        SettingItem(Icons.Default.Settings, "界面设置", "主题、字体、布局", onUISettingClick),
         SettingItem(Icons.Default.Settings, "关于", "版本信息、开源许可", onAboutClick)
     )
 
