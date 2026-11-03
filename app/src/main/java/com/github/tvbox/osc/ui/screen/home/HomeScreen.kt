@@ -56,11 +56,11 @@ fun HomeScreen(
     onSearchClick: () -> Unit = {},
     viewModel: HomeViewModel = viewModel()
 ) {
-    val categories by viewModel.categories
-    val videos by viewModel.videos
-    val sources by viewModel.sources
-    val currentSourceName by viewModel.currentSourceName
-    val loading by viewModel.loading
+    val categories = viewModel.categories.collectAsState(initial = emptyList()).value
+    val videos = viewModel.videos.collectAsState(initial = emptyList()).value
+    val sources = viewModel.sources.collectAsState(initial = emptyList()).value
+    val currentSourceName = viewModel.currentSourceName.collectAsState(initial = "").value
+    val loading = viewModel.loading.collectAsState(initial = false).value
 
     LaunchedEffect(Unit) { viewModel.init() }
 
