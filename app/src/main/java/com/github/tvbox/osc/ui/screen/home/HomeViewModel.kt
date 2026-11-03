@@ -173,20 +173,22 @@ class HomeViewModel : ViewModel() {
                 // 等待 ApiConfig.sourceBeanList 非空
                 var waited = 0L
                 while (true) {
-                    val list = try { api.sourceBeanList } catch (_: Throwable) { emptyList<SourceBean>() }
+                    // 必须用公开方法 getSourceBeanList()，sourceBeanList 是 private
+                    val list = try { api.getSourceBeanList() } catch (_: Throwable) { emptyList<SourceBean>() }
                     if (list.isNotEmpty()) {
-                        Log.d(TAG, "  ApiConfig 已就绪（等待了 ${waited}ms）")
+                        Log.d(TAG, "  ApiConfig 已就绪（等待了 ${waited}ms, sources=${list.size}）")
                         break
                     }
                     if (waited >= API_READY_TIMEOUT_MS) {
-                        Log.w(TAG, "  ApiConfig 等待超时")
+                        Log.w(TAG, "  ApiConfig 等待超时 —— 可能 loadConfig 还没跑或者 HawkConfig.API_URL 为空")
                         break
                     }
                     delay(API_READY_POLL_INTERVAL_MS)
                     waited += API_READY_POLL_INTERVAL_MS
                 }
 
-                val srcList = try { api.sourceBeanList } catch (_: Throwable) { emptyList() }
+                // 再读一次 —— 确保看到最新值
+                val srcList = try { api.getSourceBeanList() } catch (_: Throwable) { emptyList() }
                 val homeSrc = try { api.homeSourceBean } catch (_: Throwable) { null }
                 val key = homeSrc?.key ?: ""
 

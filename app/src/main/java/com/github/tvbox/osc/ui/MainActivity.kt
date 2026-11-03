@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
                         Log.e(TAG, "loadConfig error: $msg")
                     }
                     override fun success() {
-                        Log.i(TAG, "✅ loadConfig 成功，源数量: ${api.sourceBeanList.size}")
+                        Log.i(TAG, "✅ loadConfig 成功，源数量: ${api.getSourceBeanList().size}")
                     }
                 },
                 this@MainActivity
