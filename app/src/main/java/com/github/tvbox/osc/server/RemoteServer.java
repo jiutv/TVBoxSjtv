@@ -175,9 +175,9 @@ public class RemoteServer extends NanoHTTPD {
                     }
                 } else if (fileName.equals("/dns-query")) {
                     String name = session.getParms().get("name");
-                    byte[] rs = null;
+                    byte[] rs = new byte[0]; // DnsOverHttps 已关闭，暂时返回空
                     try {
-                        rs = OkGoHelper.dnsOverHttps.lookupHttpsForwardSync(name);
+                        // rs = OkGoHelper.dnsOverHttps.lookupHttpsForwardSync(name);
                     } catch (Throwable th) {
                         rs = new byte[0];
                     }
