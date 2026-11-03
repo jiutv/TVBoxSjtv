@@ -55,7 +55,6 @@ android {
             dimension "mode"
             minSdkVersion 21
             ndk {
-                //noinspection ChromeOsAbiSupport
                 abiFilters 'armeabi-v7a', 'arm64-v8a'
             }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro'
@@ -64,7 +63,6 @@ android {
             dimension "mode"
             minSdkVersion 21
             ndk {
-                //noinspection ChromeOsAbiSupport
                 abiFilters 'armeabi-v7a'
             }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'proguard-python.pro'
@@ -89,13 +87,10 @@ android {
         java64 {
             java.srcDirs += 'src/normal/java'
         }
-        python32 {
-            java.srcDirs += 'src/python/java'
-        }
-        python64 {
-            java.srcDirs += 'src/python/java'
-        }
-        // Compose / Kotlin sources live alongside Java in src/main/java
+        // python flavor 的 pyramid/chaquopy 模块没 build，跳过 src/python/java
+        // python { java.srcDirs += 'src/python/java' }
+        // python32 { java.srcDirs += 'src/python/java' }
+        // python64 { java.srcDirs += 'src/python/java' }
         main.java.srcDirs += 'src/main/java'
     }
 

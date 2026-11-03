@@ -44,9 +44,7 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.Cache;
 import okhttp3.Dns;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
-import okhttp3.dnsoverhttps.DnsOverHttps;
 import xyz.doikki.videoplayer.exo.ExoMediaSourceHelper;
 
 
@@ -113,7 +111,7 @@ public class OkGoHelper {
         ExoMediaSourceHelper.getInstance(App.getInstance()).setOkClient(ItvClient);
     }
 
-    public static DnsOverHttps dnsOverHttps = null;
+    public static Dns dnsOverHttps = null;
 
     public static ArrayList<String> dnsHttpsList = new ArrayList<>();
 
@@ -202,12 +200,7 @@ public class OkGoHelper {
             th.printStackTrace();
         }
         builder.cache(new Cache(new File(App.getInstance().getCacheDir().getAbsolutePath(), "dohcache"), 100 * 1024 * 1024));
-        OkHttpClient dohClient = builder.build();
-        String dohUrl = getDohUrl(Hawk.get(HawkConfig.DOH_URL, 0));
-//        if (!dohUrl.isEmpty()) is_doh = true;
-//        LOG.i("echo-initDnsOverHttps dohUrl:"+dohUrl);
-//        LOG.i("echo-initDnsOverHttps ips:"+ips);
-        dnsOverHttps = new DnsOverHttps.Builder().client(dohClient).url(dohUrl.isEmpty() ? null : HttpUrl.get(dohUrl)).bootstrapDnsHosts((ips!=null && !dohUrl.equals("https://doh.pub/dns-query"))?DohIps(ips):null).build();
+        dnsOverHttps = null; // DnsOverHttps 需要 OkHttp 4.x，项目用 3.12.11，暂时关闭 DoH
     }
 
     // 自定义 DNS 解析器
