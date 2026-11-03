@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -43,6 +44,7 @@ import com.github.tvbox.osc.ui.components.VideoCard
 import com.github.tvbox.osc.ui.mock.MockData
 import com.github.tvbox.osc.ui.theme.Colors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onVideoClick: (String) -> Unit = {},
@@ -51,7 +53,6 @@ fun HomeScreen(
     val tabs = MockData.homeTabs
     var selectedTab by remember { mutableStateOf(0) }
     val videos = MockData.homeVideos
-    var loading by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -78,7 +79,7 @@ fun HomeScreen(
                             .height(34.dp)
                             .clip(RoundedCornerShape(17.dp))
                             .background(Colors.SurfaceVariant)
-                            .clickable { loading = !loading }
+                            .clickable { }
                             .padding(horizontal = 12.dp)
                     ) {
                         Icon(
@@ -121,15 +122,8 @@ fun HomeScreen(
                         onClick = { selectedTab = index },
                         label = { Text(text = name, style = MaterialTheme.typography.labelMedium) },
                         colors = FilterChipDefaults.filterChipColors(
-                            containerColor = if (selected) Colors.Primary.copy(alpha = 0.9f) else Colors.SurfaceVariant,
-                            selectedContainerColor = Colors.Primary,
-                            labelColor = if (selected) Colors.OnPrimary else Colors.TextSecondary,
-                            selectedLabelColor = Colors.OnPrimary
-                        ),
-                        border = FilterChipDefaults.filterChipBorder(
-                            enabled = true, selected = selected,
-                            borderColor = Colors.Divider.copy(alpha = 0.3f),
-                            selectedBorderColor = Colors.Primary
+                            containerColor = if (selected) Colors.Primary else Colors.SurfaceVariant,
+                            labelColor = if (selected) Colors.OnPrimary else Colors.TextSecondary
                         )
                     )
                 }

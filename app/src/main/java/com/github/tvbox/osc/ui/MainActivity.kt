@@ -3,8 +3,6 @@ package com.github.tvbox.osc.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +12,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LiveTv
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ViewList
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -21,12 +20,9 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -49,13 +45,6 @@ import com.github.tvbox.osc.ui.theme.TVBoxTheme
 
 /**
  * Compose 主入口 —— 手机版 UI 壳
- *
- * 导航结构：
- * BottomNav(5个tab) → Home / Category / Live / Collect / Profile
- * 二级页面：Detail → Play / SourceConfig
- *
- * 所有页面用模拟数据，不接真实接口。
- * 底层解析、播放内核、嗅探、源配置逻辑 —— 全部不动。
  */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,15 +71,14 @@ private val bottomTabs = listOf(
 
 // ─── 根 App ───
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun App() {
     val navController = rememberNavController()
 
-    // 监听当前路由 —— 决定是否显示 BottomNav
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // 二级页面（detail / play / source_config）隐藏 BottomNav
     val showBottomNav = currentRoute in bottomTabs.map { it.route }
 
     Scaffold(
@@ -144,7 +132,6 @@ private fun App() {
             startDestination = "home",
             modifier = Modifier.fillMaxSize()
         ) {
-            // ─── 一级（Bottom Nav） ───
             composable("home") {
                 Box(modifier = Modifier.padding(innerPadding)) {
                     HomeScreen(
@@ -196,22 +183,21 @@ private fun App() {
                     )
                 }
             }
-
-            // ─── 二级（隐藏 BottomNav） ───
             composable(
                 route = "detail/{videoId}",
                 arguments = listOf(navArgument("videoId") { type = NavType.StringType })
             ) { backStack ->
                 val videoId = backStack.arguments?.getString("videoId") ?: ""
-                val video = MockData.homeVideos.find { it.id == videoId }
-                    ?: MockData.homeVideos.first()
                 DetailScreen(
                     videoId = videoId,
                     onBack = { navController.popBackStack() },
-                    onPlayClick = { navController.navigate("play/${video.name}") }
+                    onPlayClick = { navController.navigate("play/${videoId}") }
                 )
             }
-            composable("play/{title}") { backStack ->
+            composable(
+                route = "play/{title}",
+                arguments = listOf(navArgument("title") { type = NavType.StringType })
+            ) { backStack ->
                 val title = backStack.arguments?.getString("title") ?: "播放"
                 PlayScreen(
                     title = title,

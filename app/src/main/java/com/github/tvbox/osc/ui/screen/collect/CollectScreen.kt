@@ -10,7 +10,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.weight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,8 +29,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.tvbox.osc.ui.mock.MockData
+import com.github.tvbox.osc.ui.mock.MockVideo
 import com.github.tvbox.osc.ui.theme.Colors
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectScreen(
     onVideoClick: (String) -> Unit = {}
@@ -51,14 +58,14 @@ fun CollectScreen(
                 Text("暂无收藏，快去添加喜欢的影片吧", color = Colors.TextTertiary)
             }
         } else {
-            androidx.compose.foundation.lazy.LazyColumn(
+            LazyColumn(
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                items(videos) { video ->
+                items(videos) { video: MockVideo ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -97,8 +104,3 @@ fun CollectScreen(
         }
     }
 }
-
-private fun Modifier.weight(w: Float): Modifier =
-    this.then(androidx.compose.foundation.layout.weight(w))
-
-// need weight import

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,21 +12,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -40,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +53,7 @@ import com.github.tvbox.osc.ui.theme.Colors
 /**
  * 详情页 —— 顶部播放器黑色 UI 壳 + 剧集列表 + 简介 + 操作按钮
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(
     videoId: String = "",
@@ -126,18 +130,16 @@ fun DetailScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.padding(vertical = 16.dp)
                 ) {
-                    androidx.compose.material3.Button(
+                    Button(
                         onClick = onPlayClick,
                         modifier = Modifier.height(42.dp),
                         shape = RoundedCornerShape(21.dp),
-                        colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                            containerColor = Colors.Primary
-                        )
+                        colors = ButtonDefaults.buttonColors(containerColor = Colors.Primary)
                     ) {
                         Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(18.dp))
                         Text("  立即播放", color = Colors.OnPrimary, fontSize = 14.sp)
                     }
-                    androidx.compose.material3.OutlinedButton(
+                    OutlinedButton(
                         onClick = { isFavorite = !isFavorite },
                         modifier = Modifier.height(42.dp),
                         shape = RoundedCornerShape(21.dp)
@@ -153,7 +155,7 @@ fun DetailScreen(
                             fontSize = 14.sp
                         )
                     }
-                    androidx.compose.material3.OutlinedButton(
+                    OutlinedButton(
                         onClick = {},
                         modifier = Modifier.height(42.dp),
                         shape = RoundedCornerShape(21.dp)
@@ -163,11 +165,9 @@ fun DetailScreen(
                     }
                 }
 
-                // 导演 / 主演
                 Text("导演：张艺谋", color = Colors.TextSecondary, fontSize = 13.sp)
                 Text("主演：吴京, 沈腾, 黄渤, 张译, 周迅", color = Colors.TextSecondary, fontSize = 13.sp)
 
-                // 简介
                 Column(modifier = Modifier.padding(top = 12.dp)) {
                     Text(
                         text = "一个关于英雄主义与人性光辉的故事，讲述了平凡人在面对逆境时做出不平凡选择的经历。本片汇集了华语影坛最强阵容，场面震撼，情感真挚，是 2024 年度最受期待的巨制。",
@@ -204,10 +204,9 @@ fun DetailScreen(
                     contentPadding = PaddingValues(top = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    userScrollEnabled = false,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    itemsIndexed(episodes.take(18)) { index, ep ->
+                    itemsIndexed(episodes.take(18)) { index: Int, ep: MockEpisode ->
                         EpisodeChip(
                             episode = ep,
                             isSelected = index == selectedEpisode,
@@ -220,6 +219,7 @@ fun DetailScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EpisodeChip(
     episode: MockEpisode,
@@ -231,26 +231,9 @@ private fun EpisodeChip(
         onClick = onClick,
         label = { Text(episode.name, fontSize = 12.sp) },
         colors = FilterChipDefaults.filterChipColors(
-            containerColor = if (isSelected) Colors.Accent.copy(alpha = 0.9f) else Colors.SurfaceVariant,
-            selectedContainerColor = Colors.Accent,
-            labelColor = if (isSelected) Colors.Background else Colors.TextPrimary,
-            selectedLabelColor = Colors.Background
-        ),
-        border = FilterChipDefaults.filterChipBorder(
-            enabled = true, selected = isSelected,
-            borderColor = Colors.Divider.copy(alpha = 0.3f),
-            selectedBorderColor = Colors.Accent
+            containerColor = if (isSelected) Colors.Accent else Colors.SurfaceVariant,
+            labelColor = if (isSelected) Colors.Background else Colors.TextPrimary
         ),
         modifier = Modifier.height(36.dp)
     )
-}
-
-private fun androidx.compose.foundation.lazy.grid.LazyGridScope.itemsIndexed(
-    items: List<MockEpisode>,
-    itemContent: androidx.compose.foundation.lazy.grid.GridItemScope.(index: Int, item: MockEpisode) -> Unit
-) {
-    items(items = items, key = { idx -> items[idx].name }) {
-        val index = items.indexOf(it)
-        itemContent(index, it)
-    }
 }

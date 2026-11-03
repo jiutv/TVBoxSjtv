@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -29,12 +32,15 @@ import androidx.compose.ui.unit.sp
 import com.github.tvbox.osc.ui.mock.MockData
 import com.github.tvbox.osc.ui.mock.MockLiveChannel
 import com.github.tvbox.osc.ui.theme.Colors
+import androidx.compose.foundation.layout.weight
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LiveScreen(
     onChannelClick: (String) -> Unit = {}
 ) {
     val channels = MockData.liveChannels
+    val rows = channels.chunked(2)
 
     Scaffold(
         topBar = {
@@ -45,14 +51,14 @@ fun LiveScreen(
         },
         containerColor = Colors.Background
     ) { padding ->
-        androidx.compose.foundation.lazy.LazyColumn(
+        LazyColumn(
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            items(chunks = channels.chunked(2)) { row ->
+            items(rows) { row ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.fillMaxWidth()
@@ -64,7 +70,6 @@ fun LiveScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    // 奇数时补空
                     if (row.size == 1) {
                         Box(modifier = Modifier.weight(1f))
                     }
@@ -90,12 +95,11 @@ private fun LiveChannelCard(
                 .clip(RoundedCornerShape(12.dp))
                 .background(Colors.SurfaceVariant)
         ) {
-            // 占位渐变
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        androidx.compose.ui.graphics.Brush.linearGradient(
+                        Brush.linearGradient(
                             listOf(Colors.SurfaceVariant, Colors.Surface)
                         )
                     ),

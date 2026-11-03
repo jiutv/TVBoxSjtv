@@ -3,17 +3,20 @@ package com.github.tvbox.osc.ui.screen.category
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +37,7 @@ import com.github.tvbox.osc.ui.mock.MockData
 import com.github.tvbox.osc.ui.theme.Colors
 
 /** 分类页 —— 左侧分类栏 + 右侧内容 */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CategoryScreen(
     onVideoClick: (String) -> Unit = {}
@@ -58,12 +62,12 @@ fun CategoryScreen(
                 .padding(padding)
         ) {
             // 左侧分类栏
-            androidx.compose.foundation.layout.Box(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth(0.28f)
                     .background(Colors.Surface)
             ) {
-                androidx.compose.foundation.lazy.LazyColumn {
+                LazyColumn {
                     itemsIndexed(categories) { index, cat ->
                         val selected = index == selectedIndex
                         Row(
@@ -77,7 +81,7 @@ fun CategoryScreen(
                                 .padding(vertical = 14.dp, horizontal = 10.dp)
                         ) {
                             if (selected) {
-                                androidx.compose.foundation.layout.Box(
+                                Box(
                                     modifier = Modifier
                                         .padding(end = 6.dp)
                                         .background(Colors.Accent)
@@ -108,10 +112,8 @@ fun CategoryScreen(
                             onClick = { selectedTab = index },
                             label = { Text(tab, style = MaterialTheme.typography.labelSmall) },
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = if (selected) Colors.Primary.copy(alpha = 0.9f) else Colors.SurfaceVariant,
-                                selectedContainerColor = Colors.Primary,
-                                labelColor = if (selected) Colors.OnPrimary else Colors.TextSecondary,
-                                selectedLabelColor = Colors.OnPrimary
+                                containerColor = if (selected) Colors.Primary else Colors.SurfaceVariant,
+                                labelColor = if (selected) Colors.OnPrimary else Colors.TextSecondary
                             )
                         )
                     }

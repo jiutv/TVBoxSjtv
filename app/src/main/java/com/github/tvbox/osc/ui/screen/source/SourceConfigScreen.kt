@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -26,12 +29,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.tvbox.osc.ui.mock.MockData
 import com.github.tvbox.osc.ui.theme.Colors
 
 /** 源配置页 —— 只展示 UI 结构 */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SourceConfigScreen(
     onBack: () -> Unit = {}
@@ -52,7 +57,7 @@ fun SourceConfigScreen(
                             .padding(end = 14.dp)
                             .clip(RoundedCornerShape(18.dp))
                             .background(Colors.Primary.copy(alpha = 0.9f))
-                            .clickable { /* 添加源 —— UI壳，无功能 */ }
+                            .clickable { /* UI壳 */ }
                             .padding(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Icon(Icons.Default.Add, contentDescription = null,
@@ -91,13 +96,11 @@ fun SourceConfigScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
+                        val statusColor = if (status == "启用") Colors.Success else Colors.TextTertiary
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(
-                                    if (status == "启用") Colors.Success
-                                    else Colors.TextTertiary
-                                )
+                                .background(statusColor)
                                 .padding(horizontal = 8.dp, vertical = 3.dp)
                         ) {
                             Text(
@@ -121,13 +124,12 @@ fun SourceConfigScreen(
                         }
                         FilterChip(
                             selected = status == "启用",
-                            onClick = { /* toggle —— UI 壳 */ },
+                            onClick = { /* UI 壳 */ },
                             label = { Text(if (status == "启用") "已启用" else "启用",
                                 fontSize = 12.sp) },
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = if (status == "启用") Colors.Accent.copy(alpha = 0.9f)
-                                else Colors.Surface,
-                                selectedContainerColor = Colors.Accent
+                                containerColor = if (status == "启用") Colors.Accent else Colors.Surface,
+                                labelColor = if (status == "启用") Colors.Background else Colors.TextSecondary
                             )
                         )
                     }
@@ -136,9 +138,3 @@ fun SourceConfigScreen(
         }
     }
 }
-
-private fun Modifier.weight(w: Float): Modifier =
-    this.then(androidx.compose.foundation.layout.weight(w))
-
-private val Colors.Success: androidx.compose.ui.graphics.Color
-    get() = com.github.tvbox.osc.ui.theme.Colors.Success

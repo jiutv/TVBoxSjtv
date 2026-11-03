@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -64,7 +65,6 @@ fun VideoCard(
                     modifier = Modifier.fillMaxSize()
                 )
             } else {
-                // 占位渐变
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -132,10 +132,6 @@ fun VideoCard(
         }
     }
 }
-
-// 需要 aspectRatio
-private fun Modifier.aspectRatio(ratio: Float): Modifier =
-    this.then(androidx.compose.foundation.layout.aspectRatio(ratio))
 
 // ─────────────────────────────────────────────────────────────
 // Shimmer 骨架屏（加载中效果）

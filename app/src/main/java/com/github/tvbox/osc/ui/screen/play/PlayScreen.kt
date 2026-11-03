@@ -25,7 +25,6 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,7 +46,7 @@ fun PlayScreen(
     onBack: () -> Unit = {}
 ) {
     var isPlaying by remember { mutableStateOf(true) }
-    var progress by remember { mutableFloatStateOf(0.35f) }
+    var progress by remember { mutableStateOf(0.35f) }
     var controlsVisible by remember { mutableStateOf(true) }
 
     Box(
