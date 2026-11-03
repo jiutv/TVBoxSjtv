@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.github.tvbox.osc.bean.Movie
 import com.github.tvbox.osc.ui.components.VideoCard
 import com.github.tvbox.osc.ui.mock.MockData
 import com.github.tvbox.osc.ui.theme.Colors
@@ -126,7 +127,12 @@ fun CategoryScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    items(MockData.categoryVideos) { video ->
+                    items(MockData.categoryVideos.map { mock ->
+                        Movie.Video().apply {
+                            id = mock.id; name = mock.name; pic = mock.pic
+                            note = mock.note; area = mock.area; year = mock.year.toIntOrNull() ?: 0
+                        }
+                    }) { video ->
                         VideoCard(video = video, onClick = { onVideoClick(video.id) })
                     }
                 }

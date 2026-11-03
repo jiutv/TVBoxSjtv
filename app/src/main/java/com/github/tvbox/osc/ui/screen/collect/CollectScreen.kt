@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.tvbox.osc.ui.mock.MockData
-import com.github.tvbox.osc.ui.mock.MockVideo
 import com.github.tvbox.osc.ui.theme.Colors
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +62,7 @@ fun CollectScreen(
                     .fillMaxSize()
                     .padding(padding)
             ) {
-                items(videos) { video: MockVideo ->
+                items(videos) { video ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

@@ -86,7 +86,8 @@ class HomeViewModel : ViewModel() {
         _loading.value = true
         sourceViewModel.getList(sortData, currentPage)
         sourceViewModel.listResult.observeForever { absXml ->
-            absXml?.list?.videoList?.let { newVideos ->
+            // listResult 类型是 AbsXml，AbsXml.movie 是 Movie，Movie.videoList 是 List<Video>
+            absXml?.movie?.videoList?.let { newVideos ->
                 if (currentPage == 1) {
                     _videos.value = newVideos
                 } else {
