@@ -130,7 +130,7 @@ fun CategoryScreen(
                     items(MockData.categoryVideos.map { mock ->
                         Movie.Video().apply {
                             id = mock.id; name = mock.name; pic = mock.pic
-                            note = mock.note; area = mock.area; year = mock.year.toIntOrNull() ?: 0
+                            note = mock.note; area = mock.area; year = mock.year
                         }
                     }) { video ->
                         VideoCard(video = video, onClick = { onVideoClick(video.id) })
