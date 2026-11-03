@@ -22,11 +22,11 @@ import kotlinx.coroutines.launch
 /**
  * 首页 ViewModel —— 桥接 ApiConfig + SourceViewModel 到 Compose StateFlow。
  *
- * 实现要点（和旧 HomeActivity 对齐）：
- * 1. SourceViewModel.getSort()/getList() 是 OkGo 异步请求，
- *    结果通过 LiveData.postValue 回调 —— 必须用 Observer 观察
- * 2. ApiConfig.loadConfig() 必须先完成，homeSourceBean 才有值
- * 3. 分类列表要过 DefaultConfig.adjustSort() 处理
+ * 核心：SourceViewModel.getSort()/getList() 是 OkGo 异步请求，
+ * 结果通过 LiveData.postValue 回调。必须用 observer 正确桥接。
+ *
+ * ⚠️ 关键坑：MutableLiveData.observeForever() 会立刻收到残留旧值！
+ *   解决：observer 只接受 sourceKey 匹配当前请求的新结果。
  */
 class HomeViewModel : ViewModel() {
 
@@ -63,7 +63,7 @@ class HomeViewModel : ViewModel() {
 
     private fun safeCurrentSourceKey(): String {
         return try {
-            ApiConfig.get().homeSourceBean.key
+            ApiConfig.get().homeSourceBean.key  // SourceBean.getKey() 永远不返回 null
         } catch (e: Throwable) {
             Log.e(TAG, "获取 sourceKey 异常: ${e.message}")
             ""
@@ -71,27 +71,46 @@ class HomeViewModel : ViewModel() {
     }
 
     // ============================================================
-    //  LiveData → suspend 桥接（observeForever + CompletableDeferred）
+    //  LiveData → suspend 桥接（关键修复）
     // ============================================================
 
+    /**
+     * 等待 sourceViewModel.getSort(sourceKey) 的结果。
+     *
+     * 关键修复：observer 里检查 result.sourceKey == sourceKey
+     * —— 因为 observeForever() 会立刻收到 LiveData 里残留的旧值
+     *    那些旧值的 sourceKey 不匹配当前请求，必须忽略！
+     */
     private suspend fun awaitSortResult(sourceKey: String): AbsSortXml? {
         return try {
             val deferred = kotlinx.coroutines.CompletableDeferred<AbsSortXml?>()
+            var receivedCurrent = false  // 是否已收到匹配当前请求的结果
+
             val observer = androidx.lifecycle.Observer<AbsSortXml?> { result ->
-                if (!deferred.isCompleted) try { deferred.complete(result) } catch (_: Throwable) {}
+                val resultKey = result?.sourceKey
+                Log.d(TAG, "  [sort-observer] 收到结果 sourceKey=$resultKey, 期望=$sourceKey")
+                if (resultKey == sourceKey && !receivedCurrent) {
+                    receivedCurrent = true
+                    try { deferred.complete(result) } catch (_: Throwable) {}
+                }
             }
+
             sourceViewModel.sortResult.observeForever(observer)
+            Log.d(TAG, "  [sort] observer 已注册，开始请求...")
+
             try {
                 sourceViewModel.getSort(sourceKey)
-                // 有界等待：最多 35s
-                withTimeoutOrNull(35000L) { deferred.await() }
+                Log.d(TAG, "  [sort] getSort() 已调用，等待回调...")
+                // 最多等 40 秒
+                withTimeoutOrNull(40000L) { deferred.await() }
             } finally {
                 try { sourceViewModel.sortResult.removeObserver(observer) } catch (_: Throwable) {}
             }
         } catch (e: CancellationException) {
+            Log.w(TAG, "  [sort] 被取消")
             null
         } catch (e: Throwable) {
-            Log.e(TAG, "awaitSortResult 异常: ${e.message}")
+            Log.e(TAG, "  [sort] 异常: ${e.message}")
             null
         }
     }
@@ -99,20 +118,31 @@ class HomeViewModel : ViewModel() {
     private suspend fun awaitListResult(sortData: MovieSort.SortData, page: Int): AbsXml? {
         return try {
             val deferred = kotlinx.coroutines.CompletableDeferred<AbsXml?>()
+            // getList 没带 sourceKey，我们用 sentinel 标记"已收到新值"
+            var gotNewValue = false
+
             val observer = androidx.lifecycle.Observer<AbsXml?> { result ->
-                if (!deferred.isCompleted) try { deferred.complete(result) } catch (_: Throwable) {}
+                if (!gotNewValue) {
+                    gotNewValue = true
+                    Log.d(TAG, "  [list-observer] 收到结果: ${result != null}")
+                    try { deferred.complete(result) } catch (_: Throwable) {}
+                }
             }
+
             sourceViewModel.listResult.observeForever(observer)
+            Log.d(TAG, "  [list] observer 已注册，page=$page")
+
             try {
                 sourceViewModel.getList(sortData, page)
-                withTimeoutOrNull(35000L) { deferred.await() }
+                Log.d(TAG, "  [list] getList() 已调用，等待回调...")
+                withTimeoutOrNull(40000L) { deferred.await() }
             } finally {
                 try { sourceViewModel.listResult.removeObserver(observer) } catch (_: Throwable) {}
             }
         } catch (e: CancellationException) {
             null
         } catch (e: Throwable) {
-            Log.e(TAG, "awaitListResult 异常: ${e.message}")
+            Log.e(TAG, "  [list] 异常: ${e.message}")
             null
         }
     }
@@ -121,6 +151,7 @@ class HomeViewModel : ViewModel() {
         return try {
             kotlinx.coroutines.withTimeout(timeoutMs) { block() }
         } catch (_: kotlinx.coroutines.TimeoutCancellationException) {
+            Log.w(TAG, "  操作超时 ${timeoutMs}ms")
             null
         }
     }
@@ -136,14 +167,21 @@ class HomeViewModel : ViewModel() {
         }
         initJob = viewModelScope.launch {
             try {
+                Log.i(TAG, "🚀 init() 开始")
                 val api = ApiConfig.get()
 
                 // 等待 ApiConfig.sourceBeanList 非空
                 var waited = 0L
                 while (true) {
                     val list = try { api.sourceBeanList } catch (_: Throwable) { emptyList<SourceBean>() }
-                    if (list.isNotEmpty()) break
-                    if (waited >= API_READY_TIMEOUT_MS) break
+                    if (list.isNotEmpty()) {
+                        Log.d(TAG, "  ApiConfig 已就绪（等待了 ${waited}ms）")
+                        break
+                    }
+                    if (waited >= API_READY_TIMEOUT_MS) {
+                        Log.w(TAG, "  ApiConfig 等待超时")
+                        break
+                    }
                     delay(API_READY_POLL_INTERVAL_MS)
                     waited += API_READY_POLL_INTERVAL_MS
                 }
@@ -152,10 +190,10 @@ class HomeViewModel : ViewModel() {
                 val homeSrc = try { api.homeSourceBean } catch (_: Throwable) { null }
                 val key = homeSrc?.key ?: ""
 
-                Log.i(TAG, "ApiConfig 就绪: sources=${srcList.size}, homeSrcKey='$key'")
+                Log.i(TAG, "📊 状态: sources=${srcList.size}, homeSrcKey='$key', homeSrcName='${homeSrc?.name}'")
 
                 if (srcList.isEmpty() || key.isEmpty()) {
-                    Log.i(TAG, "❌ 视频源列表为空 → 显示未配置引导")
+                    Log.i(TAG, "❌ 未配置视频源 → 显示引导")
                     _sourceConfigured.value = false
                     _sources.value = emptyList()
                     _currentSourceName.value = "未配置"
@@ -168,19 +206,20 @@ class HomeViewModel : ViewModel() {
                 _sources.value = srcList
                 val name = homeSrc?.name?.ifBlank { "(未命名源)" } ?: "(未命名源)"
                 _currentSourceName.value = name
-                Log.i(TAG, "✅ 当前源: $name")
+                Log.i(TAG, "✅ 已就绪: $name (type=${homeSrc?.type})")
 
                 loadCategories()
             } catch (e: CancellationException) {
-                // 正常取消，不处理
+                // 正常取消
             } catch (e: Throwable) {
-                Log.e(TAG, "init() 崩溃，保护应用: ${e.stackTraceToString()}")
+                Log.e(TAG, "💥 init() 崩溃: ${e.stackTraceToString()}")
                 _sourceConfigured.value = false
             }
         }
     }
 
     fun forceRefresh() {
+        Log.i(TAG, "🔄 forceRefresh()")
         initJob?.cancel()
         loadJob?.cancel()
         init()
@@ -188,6 +227,7 @@ class HomeViewModel : ViewModel() {
 
     fun switchSource(source: SourceBean) {
         try {
+            Log.i(TAG, "🔀 切换源: ${source.name}")
             ApiConfig.get().setSourceBean(source)
             _currentSourceName.value = source.name.ifBlank { "(未命名源)" }
             _videos.value = emptyList()
@@ -199,6 +239,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun selectCategory(sortData: MovieSort.SortData) {
+        Log.i(TAG, "📂 选中分类: ${sortData.name}")
         currentSortData = sortData
         currentPage = 1
         _videos.value = emptyList()
@@ -214,20 +255,17 @@ class HomeViewModel : ViewModel() {
                 val result = awaitListResult(sortData, currentPage)
                 if (result != null) {
                     val videos = result.movie?.videoList ?: emptyList()
+                    Log.i(TAG, "📺 listResult: ${videos.size} 条视频")
                     if (videos.isNotEmpty()) {
                         _videos.value = if (currentPage == 1) videos else _videos.value + videos
                         currentPage++
-                        Log.i(TAG, "✅ 视频加载: page=${currentPage - 1}, count=${videos.size}")
-                    } else {
-                        Log.w(TAG, "⚠️ listResult 里没有视频")
                     }
                 } else {
-                    Log.w(TAG, "⚠️ listResult 返回 null")
+                    Log.w(TAG, "⚠️ listResult 为 null")
                 }
             } catch (e: CancellationException) {
-                // 正常取消
             } catch (e: Throwable) {
-                Log.e(TAG, "loadMore 崩溃: ${e.stackTraceToString()}")
+                Log.e(TAG, "💥 loadMore 崩溃: ${e.stackTraceToString()}")
             } finally {
                 _loading.value = false
             }
@@ -241,11 +279,11 @@ class HomeViewModel : ViewModel() {
     private fun loadCategories() {
         val key = safeCurrentSourceKey()
         if (key.isEmpty()) {
-            Log.w(TAG, "loadCategories: sourceKey 为空")
+            Log.w(TAG, "loadCategories: sourceKey 为空！")
             return
         }
 
-        Log.i(TAG, "🔄 加载分类: sourceKey=$key")
+        Log.i(TAG, "🔄 开始加载分类: sourceKey=$key")
         _loading.value = true
         _categories.value = emptyList()
         _videos.value = emptyList()
@@ -253,15 +291,20 @@ class HomeViewModel : ViewModel() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             try {
+                Log.d(TAG, "  调用 awaitSortResult...")
                 val sortXml = awaitSortResult(key)
+                Log.d(TAG, "  awaitSortResult 返回: ${if (sortXml == null) "null" else "有数据"}")
 
                 if (sortXml == null) {
-                    Log.e(TAG, "❌ sortResult 为 null")
+                    Log.e(TAG, "❌ sortResult 为 null —— 源可能没返回数据")
                     _categories.value = DefaultConfig.adjustSort(key, ArrayList(), true)
                     return@launch
                 }
 
                 val rawSortList = sortXml.classes?.sortList ?: emptyList()
+                Log.d(TAG, "  sortXml.classes.sortList.size = ${rawSortList.size}")
+                Log.d(TAG, "  sortXml.videoList.size = ${sortXml.videoList?.size ?: 0}")
+
                 val sortList = try {
                     DefaultConfig.adjustSort(key, rawSortList, true)
                 } catch (e: Throwable) {
@@ -269,19 +312,21 @@ class HomeViewModel : ViewModel() {
                     rawSortList
                 }
 
-                Log.i(TAG, "✅ 分类加载: ${sortList.size} 个")
+                Log.i(TAG, "✅ 分类处理完成: 原始 ${rawSortList.size} → 最终 ${sortList.size}")
                 _categories.value = sortList
 
                 if (sortList.isNotEmpty()) {
+                    Log.i(TAG, "  自动选中第一个分类: ${sortList.first().name}")
                     selectCategory(sortList.first())
                 } else if (!sortXml.videoList.isNullOrEmpty()) {
-                    Log.i(TAG, "ℹ️ 无分类，使用 home 推荐: ${sortXml.videoList.size}")
+                    Log.i(TAG, "ℹ️ 无分类 Tab，使用 home 推荐: ${sortXml.videoList.size}")
                     _videos.value = sortXml.videoList
+                } else {
+                    Log.w(TAG, "⚠️ sortResult 里既无分类也无视频")
                 }
             } catch (e: CancellationException) {
-                // 正常取消
             } catch (e: Throwable) {
-                Log.e(TAG, "loadCategories 崩溃: ${e.stackTraceToString()}")
+                Log.e(TAG, "💥 loadCategories 崩溃: ${e.stackTraceToString()}")
             } finally {
                 _loading.value = false
             }
