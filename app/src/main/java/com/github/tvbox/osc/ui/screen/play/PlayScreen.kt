@@ -1,53 +1,47 @@
 package com.github.tvbox.osc.ui.screen.play
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Fullscreen
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.VolumeDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.github.tvbox.osc.ui.theme.Colors
+import com.github.tvbox.osc.player.MyVideoView
 
 /**
- * 播放页 —— 全屏黑色 + 顶部返回 + 底部控制栏
- * 播放器是黑色 UI 壳，后续接入 MyVideoView
+ * 播放页 —— 用 AndroidView 包装 MyVideoView（基于 xyz.doikki.videoplayer）
  */
 @Composable
 fun PlayScreen(
-    title: String = "播放器 UI 壳",
+    title: String = "播放器",
+    playUrl: String = "",
     onBack: () -> Unit = {}
 ) {
     var isPlaying by remember { mutableStateOf(true) }
-    var progress by remember { mutableStateOf(0.35f) }
     var controlsVisible by remember { mutableStateOf(true) }
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -58,33 +52,38 @@ fun PlayScreen(
                 indication = null
             ) { controlsVisible = !controlsVisible }
     ) {
-        // 中间播放占位
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        // 🎬 MyVideoView —— AndroidView 包装
+        AndroidView(
+            factory = { ctx ->
+                MyVideoView(ctx).apply {
+                    // 设置播放类型（从 HawkConfig 读取）
+                    // PLAY_TYPE: 1=IJK, 2=Exo, 10=MXPlayer
+                    setScreenScaleType(0) // 默认缩放
+                    // 设置硬解码
+                    // 这些设置在 PlayerHelper.init() 已经全局配置
+                }
+            },
+            update = { videoView ->
+                // 当 playUrl 变化时播放
+                if (playUrl.isNotBlank()) {
+                    videoView.setUrl(playUrl)
+                    if (isPlaying) videoView.start()
+                } else {
+                    // 占位 —— 显示一个测试视频
+                    videoView.setUrl("https://media.w3.org/2010/05/sintel/trailer.mp4")
+                    if (isPlaying) videoView.start()
+                }
+            },
             modifier = Modifier.fillMaxSize()
-        ) {
-            Icon(
-                imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
-                contentDescription = null,
-                tint = Colors.Accent.copy(alpha = 0.5f),
-                modifier = Modifier.size(64.dp)
-            )
-            Text(
-                text = "播放器区域（后续接入 MyVideoView）",
-                color = Colors.TextTertiary,
-                fontSize = 13.sp,
-                modifier = Modifier.padding(top = 12.dp)
-            )
-        }
+        )
 
         // 顶部返回栏
         if (controlsVisible) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp, start = 8.dp, end = 8.dp)
-                    .background(Color(0x66000000)),
+                    .background(Color(0x99000000))
+                    .padding(top = 24.dp, start = 8.dp, end = 8.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onBack) {
@@ -108,49 +107,28 @@ fun PlayScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .background(Color(0x66000000))
+                    .background(Color(0x99000000))
                     .padding(12.dp)
             ) {
-                // 进度条
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("14:23", color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
-                    Slider(
-                        value = progress,
-                        onValueChange = { progress = it },
-                        colors = SliderDefaults.colors(
-                            thumbColor = Colors.Accent,
-                            activeTrackColor = Colors.Accent,
-                            inactiveTrackColor = Color.White.copy(alpha = 0.3f)
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 10.dp)
-                    )
-                    Text("40:00", color = Color.White.copy(alpha = 0.7f), fontSize = 12.sp)
-                }
-
-                // 控制按钮
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    IconButton(onClick = {}) {
+                        Icon(Icons.Default.SkipPrevious, contentDescription = null,
+                            tint = Color.White, modifier = Modifier.size(22.dp))
+                    }
                     IconButton(onClick = { isPlaying = !isPlaying }) {
                         Icon(
                             imageVector = if (isPlaying) Icons.Default.Pause else Icons.Default.PlayArrow,
                             contentDescription = null,
-                            tint = Color.White, modifier = Modifier.size(28.dp)
+                            tint = Color.White, modifier = Modifier.size(32.dp)
                         )
                     }
                     IconButton(onClick = {}) {
-                        Icon(Icons.Default.VolumeDown, contentDescription = null,
+                        Icon(Icons.Default.SkipNext, contentDescription = null,
                             tint = Color.White, modifier = Modifier.size(22.dp))
-                    }
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Default.Fullscreen, contentDescription = null,
-                            tint = Color.White, modifier = Modifier.size(24.dp))
                     }
                 }
             }
