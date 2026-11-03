@@ -101,7 +101,6 @@ private data class BottomTab(val route: String, val label: String, val icon: Ima
 
 private val bottomTabs = listOf(
     BottomTab("home", "首页", Icons.Default.Home),
-    BottomTab("category", "分类", Icons.Default.ViewList),
     BottomTab("live", "直播", Icons.Default.LiveTv),
     BottomTab("collect", "收藏", Icons.Default.Favorite),
     BottomTab("profile", "我的", Icons.Default.Person)
@@ -113,8 +112,8 @@ private fun App() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    val showBottomNav = currentRoute == "home" || currentRoute == "category" ||
-        currentRoute == "live" || currentRoute == "collect" || currentRoute == "profile"
+    val showBottomNav = currentRoute == "home" || currentRoute == "live" ||
+        currentRoute == "collect" || currentRoute == "profile"
 
     Scaffold(
         containerColor = Colors.Background,
