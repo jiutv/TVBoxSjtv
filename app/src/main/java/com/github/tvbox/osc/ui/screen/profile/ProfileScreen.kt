@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.tvbox.osc.ui.theme.Colors
 
-private data class SettingItem(
+private data class ProfileMenuItem(
     val icon: ImageVector,
     val title: String,
     val sub: String,
@@ -50,12 +50,12 @@ fun ProfileScreen(
     onAboutClick: () -> Unit = {}
 ) {
     val settingsItems = listOf(
-        SettingItem(Icons.Default.History, "源配置", "管理视频源", onSourceConfigClick),
-        SettingItem(Icons.Default.History, "历史记录", "观看历史", onHistoryClick),
-        SettingItem(Icons.Default.History, "收藏管理", "收藏的影片", onCollectClick),
-        SettingItem(Icons.Default.Settings, "播放设置", "播放器、解码、清晰度", onPlaySettingClick),
-        SettingItem(Icons.Default.Settings, "界面设置", "主题、字体、布局", onUISettingClick),
-        SettingItem(Icons.Default.Settings, "关于", "版本信息、开源许可", onAboutClick)
+        ProfileMenuItem(Icons.Default.History, "源配置", "管理视频源", onSourceConfigClick),
+        ProfileMenuItem(Icons.Default.History, "历史记录", "观看历史", onHistoryClick),
+        ProfileMenuItem(Icons.Default.History, "收藏管理", "收藏的影片", onCollectClick),
+        ProfileMenuItem(Icons.Default.Settings, "播放设置", "播放器、解码、清晰度", onPlaySettingClick),
+        ProfileMenuItem(Icons.Default.Settings, "界面设置", "主题、字体、布局", onUISettingClick),
+        ProfileMenuItem(Icons.Default.Settings, "关于", "版本信息、开源许可", onAboutClick)
     )
 
     Scaffold(

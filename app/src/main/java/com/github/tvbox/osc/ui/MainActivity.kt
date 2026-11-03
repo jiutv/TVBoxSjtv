@@ -237,13 +237,17 @@ private fun App() {
                 PlaceholderScreen("历史记录", onBack = { navController.popBackStack() })
             }
             composable("play_setting") {
-                PlaceholderScreen("播放设置", onBack = { navController.popBackStack() })
+                com.github.tvbox.osc.ui.screen.profile.PlaySettingScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
             composable("ui_setting") {
-                PlaceholderScreen("界面设置", onBack = { navController.popBackStack() })
+                com.github.tvbox.osc.ui.screen.profile.UISettingScreen(
+                    onBack = { navController.popBackStack() }
+                )
             }
             composable("about") {
-                PlaceholderScreen("关于", onBack = { navController.popBackStack() })
+                com.github.tvbox.osc.ui.screen.profile.AboutScreen(onBack = { navController.popBackStack() })
             }
         }
     }
