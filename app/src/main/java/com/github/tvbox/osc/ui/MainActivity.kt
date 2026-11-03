@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -115,6 +116,9 @@ private fun App() {
     val showBottomNav = currentRoute == "home" || currentRoute == "live" ||
         currentRoute == "collect" || currentRoute == "profile"
 
+    // 监听全局刷新信号 —— 从源配置页返回时触发首页刷新
+    val refreshTick by HomeRefreshBus.tick.collectAsState()
+
     Scaffold(
         containerColor = Colors.Background,
         bottomBar = {
@@ -168,7 +172,8 @@ private fun App() {
                 Box(modifier = Modifier.padding(innerPadding)) {
                     HomeScreen(
                         onVideoClick = { navController.navigate("detail/$it") },
-                        onSourceConfigClick = { navController.navigate("source_config") }
+                        onSourceConfigClick = { navController.navigate("source_config") },
+                        refreshTick = refreshTick
                     )
                 }
             }

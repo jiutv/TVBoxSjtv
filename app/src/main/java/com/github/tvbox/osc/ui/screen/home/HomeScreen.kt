@@ -55,6 +55,7 @@ fun HomeScreen(
     onVideoClick: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onSourceConfigClick: () -> Unit = {},
+    refreshTick: Int = 0,
     viewModel: HomeViewModel = viewModel()
 ) {
     val categories = viewModel.categories.collectAsState(initial = emptyList()).value
@@ -64,7 +65,8 @@ fun HomeScreen(
     val loading = viewModel.loading.collectAsState(initial = false).value
     val sourceConfigured = viewModel.sourceConfigured.collectAsState(initial = true).value
 
-    LaunchedEffect(Unit) { viewModel.init() }
+    // refreshTick 变化时强制重新初始化（从源配置页返回时触发）
+    LaunchedEffect(refreshTick) { viewModel.init() }
 
     var sourceMenuExpanded by remember { mutableStateOf(false) }
     var selectedCategoryIndex by remember { mutableStateOf(0) }

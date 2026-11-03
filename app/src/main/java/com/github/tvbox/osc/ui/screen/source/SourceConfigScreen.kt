@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.tvbox.osc.api.ApiConfig
 import com.github.tvbox.osc.bean.SourceBean
+import com.github.tvbox.osc.ui.HomeRefreshBus
 import com.github.tvbox.osc.ui.theme.Colors
 import com.github.tvbox.osc.util.HawkConfig
 import com.orhanobut.hawk.Hawk
@@ -206,6 +207,7 @@ fun SourceConfigScreen(
                                             loading = false
                                             loadMessage = ""
                                             viewModel.refresh()
+                                            HomeRefreshBus.notifySourceChanged()  // 📢 通知首页刷新
                                         }
                                     }
                                     override fun error(msg: String?) {
