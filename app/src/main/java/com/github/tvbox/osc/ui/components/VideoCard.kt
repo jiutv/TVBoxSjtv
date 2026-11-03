@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.github.tvbox.osc.ui.mock.MockVideo
+import com.github.tvbox.osc.bean.Movie
 import com.github.tvbox.osc.ui.theme.Colors
 
 // ─────────────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ import com.github.tvbox.osc.ui.theme.Colors
 
 @Composable
 fun VideoCard(
-    video: MockVideo,
+    video: Movie.Video,
     onClick: () -> Unit = {}
 ) {
     Column(
@@ -113,21 +113,25 @@ fun VideoCard(
             overflow = TextOverflow.Ellipsis,
             lineHeight = 18.sp
         )
-        if (video.score.isNotEmpty()) {
+        if (video.year > 0 || video.area.isNotEmpty()) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "⭐ ${video.score}",
-                    color = Colors.Accent,
-                    fontSize = 11.sp
-                )
-                Text(
-                    text = "${video.year} · ${video.area}",
-                    color = Colors.TextTertiary,
-                    fontSize = 11.sp
-                )
+                if (video.year > 0) {
+                    Text(
+                        text = "${video.year}",
+                        color = Colors.TextTertiary,
+                        fontSize = 11.sp
+                    )
+                }
+                if (video.area.isNotEmpty()) {
+                    Text(
+                        text = video.area,
+                        color = Colors.TextTertiary,
+                        fontSize = 11.sp
+                    )
+                }
             }
         }
     }
