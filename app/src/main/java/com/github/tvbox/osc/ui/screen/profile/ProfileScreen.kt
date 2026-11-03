@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -28,12 +27,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.tvbox.osc.ui.theme.Colors
 
-/** 我的 / 设置页 */
+private data class SettingItem(
+    val icon: ImageVector,
+    val title: String,
+    val sub: String,
+    val onClick: () -> Unit
+)
+
 @Composable
 fun ProfileScreen(
     onSourceConfigClick: () -> Unit = {},
@@ -42,12 +48,12 @@ fun ProfileScreen(
     onAboutClick: () -> Unit = {}
 ) {
     val settingsItems = listOf(
-        Triple(Icons.Default.History, "源配置", "管理视频源", onSourceConfigClick),
-        Triple(Icons.Default.History, "历史记录", "观看历史", onHistoryClick),
-        Triple(Icons.Default.History, "收藏管理", "收藏的影片", onCollectClick),
-        Triple(Icons.Default.Settings, "播放设置", "播放器、解码、清晰度", {}),
-        Triple(Icons.Default.Settings, "界面设置", "主题、字体、布局", {}),
-        Triple(Icons.Default.Settings, "关于", "版本信息、开源许可", onAboutClick)
+        SettingItem(Icons.Default.History, "源配置", "管理视频源", onSourceConfigClick),
+        SettingItem(Icons.Default.History, "历史记录", "观看历史", onHistoryClick),
+        SettingItem(Icons.Default.History, "收藏管理", "收藏的影片", onCollectClick),
+        SettingItem(Icons.Default.Settings, "播放设置", "播放器、解码、清晰度", {}),
+        SettingItem(Icons.Default.Settings, "界面设置", "主题、字体、布局", {}),
+        SettingItem(Icons.Default.Settings, "关于", "版本信息、开源许可", onAboutClick)
     )
 
     Scaffold(
@@ -58,7 +64,6 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            // 头像区
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -93,16 +98,15 @@ fun ProfileScreen(
                 }
             }
 
-            // 设置列表
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 8.dp)
             ) {
-                items(settingsItems) { (icon, title, sub, action) ->
+                items(settingsItems) { item ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { action() }
+                            .clickable { item.onClick() }
                             .padding(horizontal = 16.dp, vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -113,12 +117,12 @@ fun ProfileScreen(
                                 .background(Colors.SurfaceVariant),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(icon, contentDescription = null, tint = Colors.Accent,
+                            Icon(item.icon, contentDescription = null, tint = Colors.Accent,
                                 modifier = Modifier.size(20.dp))
                         }
                         Column(modifier = Modifier.padding(start = 14.dp).weight(1f)) {
-                            Text(title, color = Colors.TextPrimary, fontSize = 15.sp)
-                            Text(sub, color = Colors.TextTertiary, fontSize = 12.sp,
+                            Text(item.title, color = Colors.TextPrimary, fontSize = 15.sp)
+                            Text(item.sub, color = Colors.TextTertiary, fontSize = 12.sp,
                                 modifier = Modifier.padding(top = 2.dp))
                         }
                         Icon(Icons.Default.ChevronRight, contentDescription = null,

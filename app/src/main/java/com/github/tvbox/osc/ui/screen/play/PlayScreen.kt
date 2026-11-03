@@ -157,6 +157,3 @@ fun PlayScreen(
         }
     }
 }
-
-private fun Modifier.weight(w: Float): Modifier =
-    this.then(androidx.compose.foundation.layout.weight(w))

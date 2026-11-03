@@ -20,6 +20,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.github.tvbox.osc.ui.mock.MockData
 import com.github.tvbox.osc.ui.screen.category.CategoryScreen
 import com.github.tvbox.osc.ui.screen.collect.CollectScreen
 import com.github.tvbox.osc.ui.screen.detail.DetailScreen
@@ -43,9 +43,6 @@ import com.github.tvbox.osc.ui.screen.source.SourceConfigScreen
 import com.github.tvbox.osc.ui.theme.Colors
 import com.github.tvbox.osc.ui.theme.TVBoxTheme
 
-/**
- * Compose 主入口 —— 手机版 UI 壳
- */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +54,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// ─── Bottom Nav 定义 ───
-
 private data class BottomTab(val route: String, val label: String, val icon: ImageVector)
 
 private val bottomTabs = listOf(
@@ -69,17 +64,14 @@ private val bottomTabs = listOf(
     BottomTab("profile", "我的", Icons.Default.Person)
 )
 
-// ─── 根 App ───
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun App() {
     val navController = rememberNavController()
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-
-    val showBottomNav = currentRoute in bottomTabs.map { it.route }
+    val showBottomNav = currentRoute == "home" || currentRoute == "category" ||
+        currentRoute == "live" || currentRoute == "collect" || currentRoute == "profile"
 
     Scaffold(
         containerColor = Colors.Background,
@@ -95,9 +87,7 @@ private fun App() {
                             selected = selected,
                             onClick = {
                                 navController.navigate(tab.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
+                                    popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
@@ -134,38 +124,22 @@ private fun App() {
         ) {
             composable("home") {
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    HomeScreen(
-                        onVideoClick = { videoId ->
-                            navController.navigate("detail/$videoId")
-                        }
-                    )
+                    HomeScreen(onVideoClick = { navController.navigate("detail/$it") })
                 }
             }
             composable("category") {
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    CategoryScreen(
-                        onVideoClick = { videoId ->
-                            navController.navigate("detail/$videoId")
-                        }
-                    )
+                    CategoryScreen(onVideoClick = { navController.navigate("detail/$it") })
                 }
             }
             composable("live") {
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    LiveScreen(
-                        onChannelClick = { channelId ->
-                            navController.navigate("play/$channelId")
-                        }
-                    )
+                    LiveScreen(onChannelClick = { navController.navigate("play/$it") })
                 }
             }
             composable("collect") {
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    CollectScreen(
-                        onVideoClick = { videoId ->
-                            navController.navigate("detail/$videoId")
-                        }
-                    )
+                    CollectScreen(onVideoClick = { navController.navigate("detail/$it") })
                 }
             }
             composable("profile") {
@@ -179,7 +153,7 @@ private fun App() {
                                 restoreState = true
                             }
                         },
-                        onAboutClick = { /* toast */ }
+                        onAboutClick = { }
                     )
                 }
             }
@@ -191,7 +165,7 @@ private fun App() {
                 DetailScreen(
                     videoId = videoId,
                     onBack = { navController.popBackStack() },
-                    onPlayClick = { navController.navigate("play/${videoId}") }
+                    onPlayClick = { navController.navigate("play/$videoId") }
                 )
             }
             composable(
@@ -199,15 +173,10 @@ private fun App() {
                 arguments = listOf(navArgument("title") { type = NavType.StringType })
             ) { backStack ->
                 val title = backStack.arguments?.getString("title") ?: "播放"
-                PlayScreen(
-                    title = title,
-                    onBack = { navController.popBackStack() }
-                )
+                PlayScreen(title = title, onBack = { navController.popBackStack() })
             }
             composable("source_config") {
-                SourceConfigScreen(
-                    onBack = { navController.popBackStack() }
-                )
+                SourceConfigScreen(onBack = { navController.popBackStack() })
             }
         }
     }

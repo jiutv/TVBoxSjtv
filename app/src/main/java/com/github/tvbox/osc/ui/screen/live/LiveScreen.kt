@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.sp
 import com.github.tvbox.osc.ui.mock.MockData
 import com.github.tvbox.osc.ui.mock.MockLiveChannel
 import com.github.tvbox.osc.ui.theme.Colors
-import androidx.compose.foundation.layout.weight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -111,7 +110,6 @@ private fun LiveChannelCard(
                     fontSize = 22.sp
                 )
             }
-            // 直播中角标
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
