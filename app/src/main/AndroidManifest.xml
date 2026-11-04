@@ -54,6 +54,10 @@
             android:screenOrientation="sensorPortrait" />
 
         <activity
+            android:name=".ui.activity.ApiConfigActivity"
+            android:screenOrientation="sensorPortrait" />
+
+        <activity
             android:name=".ui.activity.SearchActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:screenOrientation="sensorPortrait" />

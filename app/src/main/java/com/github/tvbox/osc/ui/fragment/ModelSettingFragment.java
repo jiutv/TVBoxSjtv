@@ -25,6 +25,7 @@ import com.github.tvbox.osc.base.BaseLazyFragment;
 import com.github.tvbox.osc.bean.IJKCode;
 import com.github.tvbox.osc.bean.SourceBean;
 import com.github.tvbox.osc.event.RefreshEvent;
+import com.github.tvbox.osc.ui.activity.ApiConfigActivity;
 import com.github.tvbox.osc.ui.activity.LocalFileActivity;
 import com.github.tvbox.osc.ui.activity.SettingActivity;
 import com.github.tvbox.osc.ui.adapter.ApiHistoryDialogAdapter;
@@ -323,6 +324,11 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
+                // 手机上跳配置管理新页面 (图2)
+                if (mActivity.getResources().getBoolean(R.bool.is_phone)) {
+                    startActivity(new Intent(mActivity, ApiConfigActivity.class));
+                    return;
+                }
                 apiDialog = new ApiDialog(mActivity);
                 ApiDialog dialog = apiDialog;
                 EventBus.getDefault().register(dialog);
