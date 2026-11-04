@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ========== 现代蓝紫主题（新增，不影响旧引用） ========== -->
+    <color name="bg_root_dark">#0F1115</color>
+    <color name="bg_card_dark">#1E2230</color>
+    <color name="accent_gradient_start">#6366F1</color>
+    <color name="accent_gradient_end">#A855F7</color>
+    <color name="text_primary_white">#FFFFFFFF</color>
+    <color name="text_secondary_gray">#B0B4C4</color>
+
+    <!-- ========== 以下为原版颜色，保持不变 ========== -->
     <color name="color_6200EE">#6200EE</color>
     <color name="color_3700B3">#3700B3</color>
     <color name="color_03DAC5">#03DAC5</color>
