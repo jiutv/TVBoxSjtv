@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- AVBox 风格：选中 Tab 渐变胶囊 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:startColor="@color/av_primary_container"
+        android:endColor="@color/av_tertiary_container"
+        android:angle="135"
+        android:type="linear" />
+    <corners android:radius="24dp" />
+</shape>

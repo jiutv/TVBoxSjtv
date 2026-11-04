@@ -53,6 +53,36 @@
     <color name="dialog_text_primary">#FFFFFFFF</color>
     <color name="dialog_text_hint">#80FFFFFF</color>
 
-
+    <!-- ========== AVBox 风格 Material 3 深色主题（新增，不影响旧值） ========== -->
+    <color name="av_background">#0D0D0F</color>
+    <color name="av_surface">#141418</color>
+    <color name="av_surface_dim">#1A1A20</color>
+    <color name="av_surface_container_lowest">#1E1E26</color>
+    <color name="av_surface_container">#22222C</color>
+    <color name="av_surface_container_low">#282834</color>
+    <color name="av_surface_container_high">#2E2E3C</color>
+    <color name="av_surface_container_highest">#363646</color>
+    <color name="av_surface_bright">#404054</color>
+    <color name="av_primary">#B0BCFF</color>
+    <color name="av_on_primary">#3A3D66</color>
+    <color name="av_primary_container">#4F537E</color>
+    <color name="av_on_primary_container">#E0E4FF</color>
+    <color name="av_secondary">#C8C8DD</color>
+    <color name="av_on_secondary">#333345</color>
+    <color name="av_secondary_container">#4A4A5E</color>
+    <color name="av_on_secondary_container">#E4E4F5</color>
+    <color name="av_tertiary">#DFD6EB</color>
+    <color name="av_on_tertiary">#483E55</color>
+    <color name="av_tertiary_container">#5F546D</color>
+    <color name="av_on_tertiary_container">#F3ECFF</color>
+    <color name="av_error">#FFB4AB</color>
+    <color name="av_on_error">#690005</color>
+    <color name="av_text_primary">#E8E8F0</color>
+    <color name="av_text_secondary">#A0A0B0</color>
+    <color name="av_text_hint">#666678</color>
+    <color name="av_outline">#606072</color>
+    <color name="av_outline_variant">#404050</color>
+    <color name="av_gradient_start">#6366F1</color>
+    <color name="av_gradient_end">#A855F7</color>
 
 </resources>
