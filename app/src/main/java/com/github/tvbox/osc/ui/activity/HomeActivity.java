@@ -93,6 +93,7 @@ public class HomeActivity extends BaseActivity {
     private TextView btnLive;
     private TextView btnPush;
     private TextView btnSetting;
+    private View btnHome;
     private TvRecyclerView mGridView;
     private NoScrollViewPager mViewPager;
     private SourceViewModel sourceViewModel;
@@ -189,6 +190,7 @@ public class HomeActivity extends BaseActivity {
         this.btnLive = findViewById(R.id.btnLive);
         this.btnPush = findViewById(R.id.btnPush);
         this.btnSetting = findViewById(R.id.btnSetting);
+        this.btnHome = findViewById(R.id.btnHome);
         this.contentLayout = findViewById(R.id.contentLayout);
         this.mGridView = findViewById(R.id.mGridView);
         this.mViewPager = findViewById(R.id.mViewPager);
@@ -332,6 +334,13 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void initNavButtons() {
+        btnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                goHome();
+            }
+        });
         btnSite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -384,6 +393,30 @@ public class HomeActivity extends BaseActivity {
     }
 
     private boolean skipNextUpdate = false;
+
+    /** 返回首页：切到第一个分类 + 滚到顶部 */
+    private void goHome() {
+        if (sortAdapter == null || sortAdapter.getData().isEmpty()) return;
+        // 切到分类 Tab 第 0 项（通常是 "首页" / my0）
+        mGridView.setSelection(0);
+        sortFocused = 0;
+        // ViewPager 切到第 0 页
+        if (currentSelected != 0) {
+            currentSelected = 0;
+            mViewPager.setCurrentItem(0, false);
+        }
+        // 让 GridFragment / UserFragment 滚到顶部
+        if (!fragments.isEmpty() && currentSelected < fragments.size()) {
+            BaseLazyFragment frag = fragments.get(currentSelected);
+            if (frag instanceof GridFragment) {
+                ((GridFragment) frag).restoreView();
+            } else if (frag instanceof UserFragment) {
+                if (UserFragment.tvHotList != null) {
+                    UserFragment.tvHotList.scrollToPosition(0);
+                }
+            }
+        }
+    }
 
     private void initViewModel() {
         sourceViewModel = new ViewModelProvider(this).get(SourceViewModel.class);
