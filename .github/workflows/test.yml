@@ -109,20 +109,24 @@ jobs:
           FAILED=0
           # python/python32/python64 需要 pyramid 模块（settings.gradle 注释掉了 chaquo/pyramid），
           # 暂时只构建 java 系列 3 个 flavor，与原始项目 release 脚本一致
+          set -o pipefail
           for flavor in java java32 java64; do
             echo ""
             echo "===== Building flavor: $flavor ====="
             if ./gradlew "assemble${flavor^}Release" \
-              --no-build-cache --stacktrace --warning-mode all 2>&1 | tee "build_logs/${flavor}.log" | grep -E "BUILD SUCCESSFUL|BUILD FAILED" | tail -1; then
+              --no-build-cache --stacktrace --warning-mode all 2>&1 | tee "build_logs/${flavor}.log"; then
               echo "✅ $flavor OK"
             else
-              echo "❌ $flavor FAILED"
+              echo "❌ $flavor FAILED (exit code $?)"
               echo ""
-              echo "=== 🚨 REAL KOTLIN ERRORS (e: lines) ==="
-              grep -nE "^e:| error:|^w:" "build_logs/${flavor}.log" | head -80 || echo "(no e: lines found)"
+              echo "=== 🚨 BUILD RESULT ==="
+              grep -E "BUILD SUCCESSFUL|BUILD FAILED" "build_logs/${flavor}.log" | tail -1 || true
               echo ""
-              echo "=== 🚨 Last 200 lines of log ==="
-              tail -200 "build_logs/${flavor}.log"
+              echo "=== 🚨 REAL ERRORS (e: / error: lines) ==="
+              grep -nE "^e:| error:" "build_logs/${flavor}.log" | head -80 || echo "(no error lines found)"
+              echo ""
+              echo "=== 🚨 Last 30 lines ==="
+              tail -30 "build_logs/${flavor}.log"
               FAILED=$((FAILED+1))
             fi
           done
