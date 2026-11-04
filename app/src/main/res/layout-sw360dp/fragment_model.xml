@@ -8,21 +8,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
+        android:clipToPadding="true"
+        android:paddingTop="12dp"
+        android:paddingBottom="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp">
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="基础设置"
+                android:textColor="#99FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                     android:id="@+id/llDebug"
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="0dp"
                     android:background="@drawable/shape_setting_model_focus"
                     android:focusable="true"
 
@@ -41,7 +52,8 @@
 
                 <Space
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
                 <TextView
                         android:id="@+id/tvDebugOpen"
@@ -64,9 +76,9 @@
             <LinearLayout
                     android:id="@+id/llApi"
                     android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                     android:layout_height="match_parent"
-                    
-                    
+                    android:layout_weight="3.08"
                     android:background="@drawable/shape_setting_model_focus"
                     android:focusable="true"
                     android:gravity="center_vertical"
@@ -83,7 +95,8 @@
 
                     <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                     <TextView
                             android:id="@+id/tvApi"
@@ -107,9 +120,9 @@
             <LinearLayout
                         android:id="@+id/llApiHistory"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -126,7 +139,8 @@
 
                     <Space
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/tvMediaCodec1"
@@ -148,9 +162,9 @@
             <LinearLayout
                         android:id="@+id/llApiLine"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -174,6 +188,7 @@
                         android:id="@+id/tvApiLine"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:ellipsize="middle"
                         android:gravity="right"
                         android:singleLine="true"
@@ -193,9 +208,9 @@
             <LinearLayout
                     android:id="@+id/llHomeApi"
                     android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                     android:layout_height="match_parent"
-                    
-                    
+                    android:layout_weight="3.08"
                     android:background="@drawable/shape_setting_model_focus"
                     android:focusable="true"
                     android:gravity="center_vertical"
@@ -212,7 +227,8 @@
 
                     <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                     <TextView
                             android:id="@+id/tvHomeApi"
@@ -236,9 +252,9 @@
             <LinearLayout
                     android:id="@+id/tvHomeLive"
                     android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                     android:layout_height="match_parent"
-                    
-                    
+                    android:layout_weight="1"
                     android:background="@drawable/shape_setting_model_focus"
                     android:focusable="true"
                     android:gravity="center_vertical"
@@ -255,7 +271,8 @@
 
                     <Space
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/tvHomeText"
@@ -278,9 +295,9 @@
             <LinearLayout
                         android:id="@+id/llHomeRec"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -297,7 +314,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/tvHomeRec"
@@ -319,9 +337,9 @@
             <LinearLayout
                         android:id="@+id/llHomeRecStyle"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -338,7 +356,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/showRecStyleText"
@@ -360,9 +379,9 @@
             <LinearLayout
                         android:id="@+id/llSearchView"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -379,7 +398,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/tvSearchView"
@@ -401,9 +421,9 @@
             <LinearLayout
                         android:id="@+id/showFastSearch"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -420,7 +440,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/showFastSearchText"
@@ -439,12 +460,21 @@
                             android:textSize="20sp" />
                     </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="播放设置"
+                android:textColor="#99FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
             <LinearLayout
                         android:id="@+id/llPlay"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -461,7 +491,8 @@
 
                     <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                     <TextView
                             android:id="@+id/tvPlay"
@@ -483,9 +514,9 @@
             <LinearLayout
                         android:id="@+id/llMediaCodec"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -502,7 +533,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/tvMediaCodec"
@@ -524,9 +556,9 @@
             <LinearLayout
                         android:id="@+id/m3u8Ad"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -543,7 +575,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/m3u8AdText"
@@ -565,9 +598,9 @@
             <LinearLayout
                     android:id="@+id/danmuOpen"
                     android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                     android:layout_height="match_parent"
-                    
-                    
+                    android:layout_weight="1"
                     android:background="@drawable/shape_setting_model_focus"
                     android:focusable="true"
                     android:gravity="center_vertical"
@@ -584,7 +617,8 @@
 
                     <Space
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
                     <TextView
                         android:id="@+id/danmuOpenText"
@@ -607,9 +641,9 @@
             <LinearLayout
                     android:id="@+id/danmuApi"
                     android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                     android:layout_height="match_parent"
-                    
-                    
+                    android:layout_weight="1"
                     android:background="@drawable/shape_setting_model_focus"
                     android:focusable="true"
                     android:gravity="center_vertical"
@@ -632,6 +666,7 @@
                         android:id="@+id/danmuApiText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:ellipsize="middle"
                         android:gravity="right"
                         android:singleLine="true"
@@ -651,9 +686,9 @@
             <LinearLayout
                         android:id="@+id/llRender"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -670,7 +705,8 @@
 
                     <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                     <TextView
                             android:id="@+id/tvRenderType"
@@ -692,9 +728,9 @@
             <LinearLayout
                         android:id="@+id/autoSwitchLine"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -711,7 +747,8 @@
 
                     <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                     <TextView
                             android:id="@+id/autoSwitchLineText"
@@ -733,9 +770,9 @@
             <LinearLayout
                         android:id="@+id/llDns"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -752,7 +789,8 @@
 
                     <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                     <TextView
                             android:id="@+id/tvDns"
@@ -774,9 +812,9 @@
             <LinearLayout
                         android:id="@+id/llParseWebVew"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -793,7 +831,8 @@
 
                     <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                     <TextView
                             android:id="@+id/tvParseWebView"
@@ -813,12 +852,21 @@
                             android:textSize="20sp" />
                 </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="其他设置"
+                android:textColor="#99FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
             <LinearLayout
                         android:id="@+id/llHistoryMerge"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -835,7 +883,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/tvHistoryMerge"
@@ -857,9 +906,9 @@
             <LinearLayout
                         android:id="@+id/llHistoryNum"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -876,7 +925,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/tvHistoryNum"
@@ -898,9 +948,9 @@
             <LinearLayout
                         android:id="@+id/llWp"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -917,7 +967,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -932,9 +983,9 @@
             <LinearLayout
                         android:id="@+id/llWpRecovery"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -951,7 +1002,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -966,9 +1018,9 @@
             <LinearLayout
                         android:id="@+id/llScale"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -985,7 +1037,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/tvScaleType"
@@ -1007,9 +1060,9 @@
             <LinearLayout
                         android:id="@+id/showPreview"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -1026,7 +1079,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/showPreviewText"
@@ -1048,9 +1102,9 @@
             <LinearLayout
                         android:id="@+id/llIjkCachePlay"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -1067,7 +1121,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:id="@+id/tvIjkCachePlay"
@@ -1090,9 +1145,9 @@
             <LinearLayout
                         android:id="@+id/llClearCache"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -1109,7 +1164,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -1124,9 +1180,9 @@
             <LinearLayout
                         android:id="@+id/llBackup"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -1143,7 +1199,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -1158,9 +1215,9 @@
             <LinearLayout
                         android:id="@+id/llAbout"
                         android:layout_width="match_parent"
+                android:layout_marginTop="4dp"
                         android:layout_height="match_parent"
-                        
-                        
+                        android:layout_weight="1"
                         android:background="@drawable/shape_setting_model_focus"
                         android:focusable="true"
                         android:gravity="center_vertical"
@@ -1177,7 +1234,8 @@
 
                         <Space
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
 
                         <TextView
                             android:layout_width="wrap_content"
