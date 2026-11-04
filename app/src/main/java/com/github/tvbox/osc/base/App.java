@@ -1,6 +1,7 @@
 package com.github.tvbox.osc.base;
 
 import android.app.Activity;
+import android.os.Process;
 import androidx.multidex.MultiDexApplication;
 
 import com.github.tvbox.osc.bean.VodInfo;
@@ -20,6 +21,14 @@ import com.orhanobut.hawk.Hawk;
 import com.p2p.P2PClass;
 import com.whl.quickjs.android.QuickJSLoader;
 import com.github.catvod.crawler.JsLoader;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import me.jessyan.autosize.AutoSizeConfig;
 import me.jessyan.autosize.unit.Subunits;
@@ -59,6 +68,29 @@ public class App extends MultiDexApplication {
         PlayerHelper.init();
         QuickJSLoader.init();
         FileUtils.cleanPlayerCache();
+        // 全局崩溃捕获 —— 把崩溃栈写到 /sdcard/crash.log
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            writeCrashLog(e);
+            Process.killProcess(Process.myPid());
+            System.exit(1);
+        });
+    }
+
+    private void writeCrashLog(Throwable e) {
+        try {
+            File dir = new File(getExternalFilesDir(null), "crash");
+            if (!dir.exists()) dir.mkdirs();
+            String ts = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            File file = new File(dir, "crash_" + ts + ".txt");
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            FileWriter fw = new FileWriter(file);
+            fw.write("=== TVBox Crash Log ===\n");
+            fw.write("Time: " + new Date().toString() + "\n");
+            fw.write("Thread: " + Thread.currentThread().getName() + "\n");
+            fw.write("Stack:\n" + sw.toString() + "\n");
+            fw.close();
+        } catch (Exception ignored) {}
     }
 
     private void initParams() {
