@@ -48,17 +48,40 @@
             android:textSize="24sp" />
     </LinearLayout>
 
-    <!-- Tab: 点播 / 直播 -->
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabLayout"
+    <!-- 自定义 Tab: 点播 / 直播 (不用 Material TabLayout, 因为项目没依赖) -->
+    <LinearLayout
+        android:id="@+id/tabBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FF1A1A1A"
-        app:layout_constraintTop_toBottomOf="@id/topBar"
-        app:tabIndicatorColor="#3F51B5"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="#FFFFFF"
-        app:tabTextColor="#888888" />
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/topBar">
+
+        <TextView
+            android:id="@+id/tabVod"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="点播"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tabLive"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="直播"
+            android:textColor="#888888"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <!-- 列表 -->
     <androidx.viewpager.widget.ViewPager
@@ -66,6 +89,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout" />
+        app:layout_constraintTop_toBottomOf="@id/tabBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

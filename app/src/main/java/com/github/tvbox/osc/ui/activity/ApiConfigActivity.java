@@ -43,24 +43,44 @@ public class ApiConfigActivity extends BaseActivity {
         viewPager = findViewById(R.id.viewPager);
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnAdd = findViewById(R.id.btnAdd);
-        com.google.android.material.tabs.TabLayout tabLayout = findViewById(R.id.tabLayout);
+        TextView tabVod = findViewById(R.id.tabVod);
+        TextView tabLive = findViewById(R.id.tabLive);
 
         vodFragment = ApiListFragment.newInstance(ApiListFragment.TYPE_VOD);
         liveFragment = ApiListFragment.newInstance(ApiListFragment.TYPE_LIVE);
 
         Fragment[] fragments = {vodFragment, liveFragment};
-        String[] titles = {"点播", "直播"};
 
         viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager(), 0) {
             @NonNull @Override public Fragment getItem(int position) { return fragments[position]; }
             @Override public int getCount() { return fragments.length; }
-            @Nullable @Override public CharSequence getPageTitle(int position) { return titles[position]; }
         });
-        tabLayout.setupWithViewPager(viewPager);
+
+        // 手动 Tab 切换 (不用 Material TabLayout, 项目没这个依赖)
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override public void onPageSelected(int position) {
+                updateTabStyle(tabVod, tabLive, position);
+            }
+        });
+        tabVod.setOnClickListener(v -> viewPager.setCurrentItem(0, true));
+        tabLive.setOnClickListener(v -> viewPager.setCurrentItem(1, true));
 
         btnBack.setOnClickListener(v -> finish());
-
         btnAdd.setOnClickListener(v -> showAddDialog());
+    }
+
+    private void updateTabStyle(TextView tabVod, TextView tabLive, int selected) {
+        if (selected == 0) {
+            tabVod.setTextColor(0xFFFFFFFF);
+            tabVod.setTypeface(null, android.graphics.Typeface.BOLD);
+            tabLive.setTextColor(0xFF888888);
+            tabLive.setTypeface(null, android.graphics.Typeface.NORMAL);
+        } else {
+            tabLive.setTextColor(0xFFFFFFFF);
+            tabLive.setTypeface(null, android.graphics.Typeface.BOLD);
+            tabVod.setTextColor(0xFF888888);
+            tabVod.setTypeface(null, android.graphics.Typeface.NORMAL);
+        }
     }
 
     private void showAddDialog() {
