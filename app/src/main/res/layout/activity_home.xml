@@ -121,13 +121,14 @@
         android:background="#FF1A1A1A"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
-        <TextView
+        <!-- 历史 -->
+        <LinearLayout
             android:id="@+id/btnHistory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -137,13 +138,28 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="历史"
-            android:textColor="#BBFFFFFF"
-            android:textSize="13sp" />
+            android:orientation="vertical"
+            android:paddingTop="6dp"
+            android:paddingBottom="4dp">
 
-        <TextView
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="历史"
+                android:src="@drawable/icon_history" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="历史"
+                android:textColor="#BBFFFFFF"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- 收藏 -->
+        <LinearLayout
             android:id="@+id/btnCollect"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -153,13 +169,28 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="收藏"
-            android:textColor="#BBFFFFFF"
-            android:textSize="13sp" />
+            android:orientation="vertical"
+            android:paddingTop="6dp"
+            android:paddingBottom="4dp">
 
-        <TextView
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="收藏"
+                android:src="@drawable/icon_collect" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="收藏"
+                android:textColor="#BBFFFFFF"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- 直播 -->
+        <LinearLayout
             android:id="@+id/btnLive"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -169,13 +200,28 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="直播"
-            android:textColor="#BBFFFFFF"
-            android:textSize="13sp" />
+            android:orientation="vertical"
+            android:paddingTop="6dp"
+            android:paddingBottom="4dp">
 
-        <TextView
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="直播"
+                android:src="@drawable/icon_live" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="直播"
+                android:textColor="#BBFFFFFF"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- 推送 -->
+        <LinearLayout
             android:id="@+id/btnPush"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -185,13 +231,28 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="推送"
-            android:textColor="#BBFFFFFF"
-            android:textSize="13sp" />
+            android:orientation="vertical"
+            android:paddingTop="6dp"
+            android:paddingBottom="4dp">
 
-        <TextView
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="推送"
+                android:src="@drawable/icon_push" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="推送"
+                android:textColor="#BBFFFFFF"
+                android:textSize="11sp" />
+
+        </LinearLayout>
+
+        <!-- 设置 -->
+        <LinearLayout
             android:id="@+id/btnSetting"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -201,11 +262,25 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:gravity="center"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:text="设置"
-            android:textColor="#BBFFFFFF"
-            android:textSize="13sp" />
+            android:orientation="vertical"
+            android:paddingTop="6dp"
+            android:paddingBottom="4dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:contentDescription="设置"
+                android:src="@drawable/icon_setting" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="设置"
+                android:textColor="#BBFFFFFF"
+                android:textSize="11sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
