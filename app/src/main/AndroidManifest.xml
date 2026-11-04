@@ -32,10 +32,9 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
 
-        <!-- ========== 旧 Java Activity — 全部恢复 enabled，HomeActivity 做 launcher ========== -->
-
+        <!-- Compose MainActivity — 新 UI launcher -->
         <activity
-            android:name=".ui.activity.HomeActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize">
@@ -44,6 +43,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 旧 HomeActivity — 保留做 fallback（MainActivity 崩溃时跳转） -->
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:enabled="true"
+            android:exported="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
 
         <activity
             android:name=".ui.activity.DetailActivity"
@@ -83,14 +90,6 @@
         <activity
             android:name=".ui.activity.LocalFileActivity"
             android:screenOrientation="sensorPortrait" />
-
-        <!-- Compose MainActivity — 先加崩溃保护，手动跳转测试 -->
-        <activity
-            android:name=".ui.MainActivity"
-            android:enabled="true"
-            android:exported="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
 
         <service
             android:name=".dlna.DLNACastService"

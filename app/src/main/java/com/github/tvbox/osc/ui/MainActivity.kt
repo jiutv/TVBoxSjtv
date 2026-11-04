@@ -102,14 +102,23 @@ class MainActivity : ComponentActivity() {
     private fun initApiConfig() {
         val api = ApiConfig.get()
         val apiUrl = Hawk.get(HawkConfig.API_URL, "")
-        if (apiUrl.isEmpty()) {
-            Log.w(TAG, "未设置 HawkConfig.API_URL，跳过 loadConfig")
+        Log.i(TAG, "initApiConfig: API_URL='$apiUrl', 缓存源数量=${api.getSourceBeanList().size}")
+        
+        // 如果已经有缓存的源数据了（比如之前旧版配过源），直接用
+        if (api.getSourceBeanList().isNotEmpty()) {
+            Log.i(TAG, "✅ ApiConfig 已有缓存数据，跳过 loadConfig")
             return
         }
+        
+        if (apiUrl.isEmpty()) {
+            Log.w(TAG, "⚠️ HawkConfig.API_URL 为空，源未配置")
+            return
+        }
+        
         Log.i(TAG, "开始加载视频源配置: $apiUrl")
         lifecycleScope.launch {
             api.loadConfig(
-                true,
+                true,  // useCacheConfig = true，优先用缓存
                 object : ApiConfig.LoadConfigCallback {
                     override fun notice(msg: String?) {
                         Log.i(TAG, "loadConfig notice: $msg")
