@@ -1,20 +1,20 @@
 package com.github.tvbox.osc.ui
 
 import android.os.Bundle
+import android.os.Process
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LiveTv
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.ViewList
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -23,10 +23,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.LiveTv
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ViewList
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -56,12 +65,36 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // === 初始化 ApiConfig（加载视频源配置） ===
+        // === 全局崩溃保护 —— Compose 里任何异常都不会让 App 闪退 ===
+        Thread.setDefaultUncaughtExceptionHandler { _, e ->
+            Log.e(TAG, "💥 未捕获异常: ${e.message}", e)
+            // 写崩溃日志到文件
+            try {
+                val dir = getExternalFilesDir("crash")
+                if (dir != null) {
+                    val file = java.io.File(dir, "crash_${System.currentTimeMillis()}.txt")
+                    file.writeText(Log.getStackTraceString(e))
+                    Log.i(TAG, "崩溃日志已写入: ${file.absolutePath}")
+                }
+            } catch (_: Throwable) {}
+            // 跳回 HomeActivity
+            val intent = android.content.Intent(this, com.github.tvbox.osc.ui.activity.HomeActivity::class.java)
+            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+            Process.killProcess(Process.myPid())
+            System.exit(0)
+        }
+
         initApiConfig()
 
         setContent {
-            TVBoxTheme {
-                App()
+            try {
+                TVBoxTheme {
+                    App()
+                }
+            } catch (e: Throwable) {
+                Log.e(TAG, "💥 Compose setContent 崩溃: ${e.message}", e)
+                CrashFallbackScreen(e)
             }
         }
     }
@@ -286,6 +319,62 @@ private fun PlaceholderScreen(
                 color = Colors.TextTertiary,
                 fontSize = 14.sp
             )
+        }
+    }
+}
+
+/** Compose 崩溃兜底页面 —— 显示错误堆栈 + 跳转回旧 HomeActivity */
+@Composable
+private fun CrashFallbackScreen(e: Throwable) {
+    MaterialTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.foundation.layout.Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "⚠️ Compose UI 加载失败",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFE53935)
+                )
+                Text(
+                    text = e.message ?: "未知错误",
+                    fontSize = 14.sp,
+                    color = Color(0xFF666666)
+                )
+                androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(vertical = 8.dp))
+                Text(
+                    text = "崩溃日志已写入 /sdcard/Android/data/com.github.tvbox.osc/jun/files/crash/",
+                    fontSize = 12.sp,
+                    color = Color(0xFF999999)
+                )
+                Button(
+                    onClick = {
+                        android.os.Handler(android.os.Looper.getMainLooper()).post {
+                            val intent = android.content.Intent(this@MainActivity, com.github.tvbox.osc.ui.activity.HomeActivity::class.java)
+                            intent.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP or android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                            startActivity(intent)
+                            finish()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1976D2))
+                ) {
+                    Text("→ 返回旧版首页")
+                }
+                Text(
+                    text = Log.getStackTraceString(e),
+                    fontSize = 10.sp,
+                    color = Color(0xFFAAAAAA),
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }

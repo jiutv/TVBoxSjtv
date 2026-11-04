@@ -84,10 +84,10 @@
             android:name=".ui.activity.LocalFileActivity"
             android:screenOrientation="sensorPortrait" />
 
-        <!-- Compose MainActivity — 暂时禁用（启动崩溃待修复） -->
+        <!-- Compose MainActivity — 先加崩溃保护，手动跳转测试 -->
         <activity
             android:name=".ui.MainActivity"
-            android:enabled="false"
+            android:enabled="true"
             android:exported="false"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
