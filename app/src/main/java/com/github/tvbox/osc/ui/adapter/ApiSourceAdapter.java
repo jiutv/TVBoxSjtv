@@ -1,10 +1,9 @@
 package com.github.tvbox.osc.ui.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,24 +15,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 配置管理列表适配器 (图2里的配置列表)
+ * 配置列表适配器 — 订阅管理页的列表 (匹配图1图2图3样式)
+ * 激活项: 青绿色卡片 + 绿色 ✓ 勾选圈
+ * 未激活项: 深灰卡片 + 灰色 ○ 单选圈
+ * 右侧: 灰色 ✕ 删除按钮
  */
 public class ApiSourceAdapter extends RecyclerView.Adapter<ApiSourceAdapter.VH> {
 
     public static class SourceItem {
         public String url;
         public String name;
-        public boolean enabled; // 当前启用的
+        public String sourceTag; // "来自: 订阅: 1"
+        public boolean enabled;
 
         public SourceItem(String url, String name, boolean enabled) {
             this.url = url;
             this.name = name;
             this.enabled = enabled;
-        }
-
-        /** 显示的文本: 有名字优先名字, 否则 URL */
-        public String getDisplayText() {
-            return (name != null && !name.isEmpty()) ? name : url;
         }
     }
 
@@ -41,7 +39,7 @@ public class ApiSourceAdapter extends RecyclerView.Adapter<ApiSourceAdapter.VH> 
     private OnSourceListener listener;
 
     public interface OnSourceListener {
-        void onToggle(int position, SourceItem item, boolean enabled);
+        void onActivate(int position, SourceItem item);
         void onDelete(int position, SourceItem item);
     }
 
@@ -63,20 +61,51 @@ public class ApiSourceAdapter extends RecyclerView.Adapter<ApiSourceAdapter.VH> 
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
         SourceItem item = items.get(pos);
-        h.tvUrl.setText(item.getDisplayText());
-        h.switchEnabled.setOnCheckedChangeListener(null); // 先清掉
-        h.switchEnabled.setChecked(item.enabled);
-        h.switchEnabled.setOnCheckedChangeListener((btn, checked) -> {
-            if (listener != null) listener.onToggle(h.getAdapterPosition(), item, checked);
+
+        // 卡片背景 (激活=青底, 未激活=深灰)
+        h.itemView.setSelected(item.enabled);
+
+        // 左侧图标: 激活=绿色✓填充圈, 未激活=空心○圈
+        if (item.enabled) {
+            h.tvIcon.setText("✓");
+            h.tvIcon.setTextColor(Color.WHITE);
+            h.tvIcon.setBackgroundResource(R.drawable.bg_source_active_circle);
+            h.tvName.setTextColor(Color.WHITE);
+        } else {
+            h.tvIcon.setText("");
+            h.tvIcon.setTextColor(Color.GRAY);
+            h.tvIcon.setBackgroundResource(R.drawable.bg_source_inactive_circle);
+            h.tvName.setTextColor(Color.parseColor("#E0E0E0"));
+        }
+
+        // 名字: 优先自定义名字, 否则自动提取
+        String displayName = item.name != null && !item.name.isEmpty()
+                ? item.name : extractSimpleName(item.url);
+        h.tvName.setText(displayName);
+
+        // URL
+        h.tvUrl.setText(item.url);
+
+        // 来源标签 (图3里的 "来自: 订阅: 1")
+        if (item.sourceTag != null && !item.sourceTag.isEmpty()) {
+            h.tvSourceTag.setText(item.sourceTag);
+            h.tvSourceTag.setVisibility(View.VISIBLE);
+        } else {
+            h.tvSourceTag.setVisibility(View.GONE);
+        }
+
+        // 点击卡片 = 激活
+        h.itemView.setOnClickListener(v -> {
+            if (listener != null && !item.enabled) {
+                listener.onActivate(h.getAdapterPosition(), item);
+            }
         });
 
-        // 长按删除
-        h.itemView.setOnLongClickListener(v -> {
+        // X 按钮 = 删除
+        h.btnDelete.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onDelete(h.getAdapterPosition(), item);
-                return true;
             }
-            return false;
         });
     }
 
@@ -84,13 +113,37 @@ public class ApiSourceAdapter extends RecyclerView.Adapter<ApiSourceAdapter.VH> 
     public int getItemCount() { return items.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
-        TextView tvIcon, tvUrl;
-        Switch switchEnabled;
+        TextView tvIcon, tvName, tvUrl, tvSourceTag, btnDelete;
         public VH(@NonNull View itemView) {
             super(itemView);
             tvIcon = itemView.findViewById(R.id.tvIcon);
+            tvName = itemView.findViewById(R.id.tvName);
             tvUrl = itemView.findViewById(R.id.tvUrl);
-            switchEnabled = itemView.findViewById(R.id.switchEnabled);
+            tvSourceTag = itemView.findViewById(R.id.tvSourceTag);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
+    }
+
+    private static String extractSimpleName(String url) {
+        if (url == null) return "";
+        // clan://localhost/Download/xxx.json → xxx
+        if (url.startsWith("clan://localhost/")) {
+            String p = url.substring("clan://localhost/".length());
+            int s = p.lastIndexOf('/');
+            if (s >= 0) p = p.substring(s + 1);
+            if (p.endsWith(".json")) p = p.substring(0, p.length() - 5);
+            if (!p.isEmpty() && p.length() < 30) return p;
+        }
+        // https://.../xxx.txt → xxx
+        try {
+            int l = url.lastIndexOf('/');
+            if (l > 0) {
+                String tail = url.substring(l + 1);
+                int dot = tail.lastIndexOf('.');
+                if (dot > 0) tail = tail.substring(0, dot);
+                if (!tail.isEmpty() && tail.length() < 25) return tail;
+            }
+        } catch (Exception ignored) {}
+        return url.length() > 28 ? url.substring(0, 28) + "…" : url;
     }
 }

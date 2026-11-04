@@ -1,49 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 配置列表项: 激活态 = 绿色勾选 + 青色高亮背景; 未激活态 = 单选圆圈 + 白底 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="12dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginRight="12dp"
-    android:layout_marginBottom="4dp"
-    android:background="#FF1E1E1E"
-    android:padding="12dp">
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:paddingTop="14dp"
+    android:paddingBottom="14dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="8dp"
+    android:background="@drawable/bg_api_source_item">
 
-    <!-- 图标: 链接 -->
+    <!-- 左侧状态图标: 激活时 ✓ 绿色勾选圈, 未激活时 ○ 单选圆圈 -->
     <TextView
         android:id="@+id/tvIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="🔗"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:gravity="center"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColor="#4CAF50"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/bg_source_active_circle" />
 
-    <!-- URL / 名字 -->
-    <TextView
-        android:id="@+id/tvUrl"
+    <!-- 中间内容 -->
+    <LinearLayout
+        android:id="@+id/contentWrap"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginStart="12dp"
-        android:ellipsize="middle"
-        android:maxLines="2"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/switchEnabled"
         app:layout_constraintStart_toEndOf="@id/tvIcon"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toStartOf="@id/btnDelete"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- 开关 -->
-    <Switch
-        android:id="@+id/switchEnabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        <!-- 第一行: 名字 + 来源标签 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSourceTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFA05050"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- 第二行: URL -->
+        <TextView
+            android:id="@+id/tvUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#AAAAAA"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- 右侧删除按钮 (X) -->
+    <TextView
+        android:id="@+id/btnDelete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:text="✕"
+        android:textColor="#FF5252"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/bg_source_delete_circle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

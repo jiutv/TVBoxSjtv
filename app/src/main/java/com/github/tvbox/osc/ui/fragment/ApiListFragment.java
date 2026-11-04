@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 配置列表 Fragment — 一个 Tab 的内容 (点播 or 直播)
+ * 配置列表 Fragment — 每个 Tab 的内容 (点播 or 直播)
  */
 public class ApiListFragment extends Fragment {
 
-    public static final int TYPE_VOD = 0;   // 点播
-    public static final int TYPE_LIVE = 1;  // 直播
+    public static final int TYPE_VOD = 0;
+    public static final int TYPE_LIVE = 1;
 
     private int type;
     private RecyclerView recyclerView;
@@ -40,13 +41,16 @@ public class ApiListFragment extends Fragment {
 
     public static ApiListFragment newInstance(int type) {
         ApiListFragment f = new ApiListFragment();
-        f.type = type;
+        Bundle args = new Bundle();
+        args.putInt("type", type);
+        f.setArguments(args);
         return f;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) type = getArguments().getInt("type", TYPE_VOD);
     }
 
     @Nullable
@@ -63,24 +67,25 @@ public class ApiListFragment extends Fragment {
         adapter = new ApiSourceAdapter();
         adapter.setListener(new ApiSourceAdapter.OnSourceListener() {
             @Override
-            public void onToggle(int position, ApiSourceAdapter.SourceItem item, boolean enabled) {
-                if (enabled) {
-                    activateSource(item.url);
-                } else {
-                    // 不允许全部禁用 — 如果只剩一个, 不允许关
-                    Toast.makeText(getContext(), "至少启用一个配置", Toast.LENGTH_SHORT).show();
-                    adapter.notifyItemChanged(position); // 还原
-                }
+            public void onActivate(int position, ApiSourceAdapter.SourceItem item) {
+                activateSource(item.url);
             }
 
             @Override
             public void onDelete(int position, ApiSourceAdapter.SourceItem item) {
+                // 防止删光
+                List<ApiSourceAdapter.SourceItem> current = new ArrayList<>(adapter.items);
+                long enabledCount = current.stream().filter(i -> i.enabled).count();
+                if (item.enabled && enabledCount <= 1) {
+                    Toast.makeText(getContext(), "至少保留一个配置", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 List<String> list = getHistory();
                 list.remove(item.url);
                 Hawk.put(type == TYPE_VOD ? HawkConfig.API_HISTORY : HawkConfig.LIVE_API_HISTORY, list);
-                // 如果删的是当前启用的, 启用下一个或置空
-                String current = getCurrentUrl();
-                if (item.url.equals(current)) {
+                String currentUrl = getCurrentUrl();
+                if (item.url.equals(currentUrl)) {
+                    // 删的是当前启用的 — 自动启用下一个或置空
                     String newCurrent = list.isEmpty() ? "" : list.get(0);
                     setCurrentUrl(newCurrent);
                     activateSource(newCurrent);
@@ -113,7 +118,7 @@ public class ApiListFragment extends Fragment {
         recyclerView.setVisibility(items.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
-    private String getHistory() {
+    private List<String> getHistory() {
         return Hawk.get(type == TYPE_VOD ? HawkConfig.API_HISTORY : HawkConfig.LIVE_API_HISTORY,
                 new ArrayList<String>());
     }
@@ -130,10 +135,12 @@ public class ApiListFragment extends Fragment {
         if (url.isEmpty()) return;
         String oldUrl = getCurrentUrl();
         setCurrentUrl(url);
-        // 如果点播源变了, 刷新首页
+        // 如果点播源变了, 同步直播源 + 刷新首页
         if (type == TYPE_VOD && !url.equals(oldUrl)) {
-            // 同步直播源
             Hawk.put(HawkConfig.LIVE_API_URL, url);
+            if (!HistoryHelper.isApiLineHistory(url)) {
+                HistoryHelper.clearApiLineList();
+            }
             try {
                 ApiConfig.get().setSourceBean(ApiConfig.get().getHomeSourceBean());
             } catch (Exception ignored) {}
@@ -142,25 +149,25 @@ public class ApiListFragment extends Fragment {
         loadData();
     }
 
-    /** 从 URL 提取可读名字 */
     private String extractName(String url) {
-        // clan://localhost/Download/xxx.json → xxx
+        if (url == null) return "";
+        // clan://localhost/xxx → xxx
         if (url.startsWith("clan://localhost/")) {
-            String path = url.substring("clan://localhost/".length());
-            int slash = path.lastIndexOf('/');
-            if (slash >= 0) path = path.substring(slash + 1);
-            if (path.endsWith(".json")) path = path.substring(0, path.length() - 5);
-            return path;
+            String p = url.substring("clan://localhost/".length());
+            int s = p.lastIndexOf('/');
+            if (s >= 0) p = p.substring(s + 1);
+            if (p.endsWith(".json")) p = p.substring(0, p.length() - 5);
+            if (!p.isEmpty() && p.length() < 30) return p;
         }
-        // https://xxx.com/path/config.json → config
         try {
-            int lastSlash = url.lastIndexOf('/');
-            if (lastSlash > 0) {
-                String tail = url.substring(lastSlash + 1);
-                if (tail.endsWith(".json")) tail = tail.substring(0, tail.length() - 5);
-                if (tail.length() > 0 && tail.length() < 30) return tail;
+            int l = url.lastIndexOf('/');
+            if (l > 0) {
+                String tail = url.substring(l + 1);
+                int dot = tail.lastIndexOf('.');
+                if (dot > 0) tail = tail.substring(0, dot);
+                if (!tail.isEmpty() && tail.length() < 25) return tail;
             }
         } catch (Exception ignored) {}
-        return url;
+        return url.length() > 28 ? url.substring(0, 28) + "…" : url;
     }
 }

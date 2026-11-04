@@ -367,6 +367,12 @@ public class ModelSettingFragment extends BaseLazyFragment {
         findViewById(R.id.llApiHistory).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                FastClickCheckUtil.check(v);
+                // 手机上跳订阅管理页 (点播订阅 Tab 包含所有 API_HISTORY 数据)
+                if (mActivity.getResources().getBoolean(R.bool.is_phone)) {
+                    startActivity(new Intent(mActivity, ApiConfigActivity.class));
+                    return;
+                }
                 ArrayList<String> history = Hawk.get(HawkConfig.API_HISTORY, new ArrayList<String>());
                 if (history.isEmpty())
                     return;

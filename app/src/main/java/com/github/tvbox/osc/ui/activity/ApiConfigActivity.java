@@ -3,9 +3,11 @@ package com.github.tvbox.osc.ui.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -23,15 +25,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 配置管理页 (图2)
- * TabLayout + ViewPager: 点播 / 直播
- * 右上角 + → 添加订阅对话框 (图3)
+ * 订阅管理页 (图1/图2)
+ * 顶栏: ← 返回  订阅管理  📺  📋  ＋
+ * Tab: 点播订阅 / 直播订阅 (带下划线指示器)
+ * 点 ＋ → AddSourceDialog (图3 添加订阅)
  */
 public class ApiConfigActivity extends BaseActivity {
 
     private ViewPager viewPager;
     private ApiListFragment vodFragment;
     private ApiListFragment liveFragment;
+    private TextView tabVod, tabLive;
+    private View tabVodIndicator, tabLiveIndicator;
 
     @Override
     protected int getLayoutResID() {
@@ -43,8 +48,10 @@ public class ApiConfigActivity extends BaseActivity {
         viewPager = findViewById(R.id.viewPager);
         TextView btnBack = findViewById(R.id.btnBack);
         TextView btnAdd = findViewById(R.id.btnAdd);
-        TextView tabVod = findViewById(R.id.tabVod);
-        TextView tabLive = findViewById(R.id.tabLive);
+        tabVod = findViewById(R.id.tabVod);
+        tabLive = findViewById(R.id.tabLive);
+        tabVodIndicator = findViewById(R.id.tabVodIndicator);
+        tabLiveIndicator = findViewById(R.id.tabLiveIndicator);
 
         vodFragment = ApiListFragment.newInstance(ApiListFragment.TYPE_VOD);
         liveFragment = ApiListFragment.newInstance(ApiListFragment.TYPE_LIVE);
@@ -56,10 +63,10 @@ public class ApiConfigActivity extends BaseActivity {
             @Override public int getCount() { return fragments.length; }
         });
 
-        // 手动 Tab 切换 (不用 Material TabLayout, 项目没这个依赖)
+        // 下划线 Tab 切换
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override public void onPageSelected(int position) {
-                updateTabStyle(tabVod, tabLive, position);
+                updateTabUI(position);
             }
         });
         tabVod.setOnClickListener(v -> viewPager.setCurrentItem(0, true));
@@ -67,19 +74,28 @@ public class ApiConfigActivity extends BaseActivity {
 
         btnBack.setOnClickListener(v -> finish());
         btnAdd.setOnClickListener(v -> showAddDialog());
+
+        updateTabUI(0);
     }
 
-    private void updateTabStyle(TextView tabVod, TextView tabLive, int selected) {
+    private void updateTabUI(int selected) {
+        int activeColor = 0xFFD4A04C;   // 金色 (图1图2的下划线色)
+        int inactiveColor = 0xFF888888;
+
         if (selected == 0) {
-            tabVod.setTextColor(0xFFFFFFFF);
+            tabVod.setTextColor(activeColor);
             tabVod.setTypeface(null, android.graphics.Typeface.BOLD);
-            tabLive.setTextColor(0xFF888888);
+            tabLive.setTextColor(inactiveColor);
             tabLive.setTypeface(null, android.graphics.Typeface.NORMAL);
+            tabVodIndicator.setBackgroundColor(activeColor);
+            tabLiveIndicator.setBackgroundColor(0x00000000);
         } else {
-            tabLive.setTextColor(0xFFFFFFFF);
+            tabLive.setTextColor(activeColor);
             tabLive.setTypeface(null, android.graphics.Typeface.BOLD);
-            tabVod.setTextColor(0xFF888888);
+            tabVod.setTextColor(inactiveColor);
             tabVod.setTypeface(null, android.graphics.Typeface.NORMAL);
+            tabLiveIndicator.setBackgroundColor(activeColor);
+            tabVodIndicator.setBackgroundColor(0x00000000);
         }
     }
 
@@ -88,19 +104,15 @@ public class ApiConfigActivity extends BaseActivity {
         AddSourceDialog dialog = new AddSourceDialog(this);
         dialog.setOnSaveListener((name, url) -> {
             List<String> list = Hawk.get(currentTab == 0 ? HawkConfig.API_HISTORY : HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
-            if (!list.contains(url)) list.add(0, url); // 新的放最前
+            if (!list.contains(url)) list.add(0, url);
             if (currentTab == 0) {
                 Hawk.put(HawkConfig.API_HISTORY, list);
                 HistoryHelper.setApiHistory(url);
-            } else {
-                Hawk.put(HawkConfig.LIVE_API_HISTORY, list);
-                HistoryHelper.setLiveApiHistory(url);
-            }
-            // 自动启用新添加的
-            if (currentTab == 0) {
                 Hawk.put(HawkConfig.API_URL, url);
                 Hawk.put(HawkConfig.LIVE_API_URL, url);
             } else {
+                Hawk.put(HawkConfig.LIVE_API_HISTORY, list);
+                HistoryHelper.setLiveApiHistory(url);
                 Hawk.put(HawkConfig.LIVE_API_URL, url);
             }
             Toast.makeText(this, "已添加并启用", Toast.LENGTH_SHORT).show();

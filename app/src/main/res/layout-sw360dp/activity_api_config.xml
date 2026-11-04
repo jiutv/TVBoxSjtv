@@ -5,50 +5,64 @@
     android:layout_height="match_parent"
     android:background="#FF121212">
 
-    <!-- 顶栏: 标题 + 返回 + 加号 -->
+    <!-- 顶栏 -->
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:background="#FF1A1A1A"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="12dp"
-        android:paddingTop="10dp"
-        android:paddingRight="12dp"
-        android:paddingBottom="10dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
             android:text="←"
             android:textColor="#FFFFFF"
-            android:textSize="24sp" />
+            android:textSize="22sp" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="配置管理"
+            android:text="订阅管理"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/btnTv"
+            android:layout_width="36dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="📺"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/btnList"
+            android:layout_width="36dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="📋"
+            android:textSize="20sp" />
+
+        <TextView
             android:id="@+id/btnAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:gravity="center"
             android:text="＋"
             android:textColor="#FFFFFF"
             android:textSize="24sp" />
     </LinearLayout>
 
-    <!-- 自定义 Tab: 点播 / 直播 (不用 Material TabLayout, 因为项目没依赖) -->
+    <!-- Tab: 带下划线 -->
     <LinearLayout
         android:id="@+id/tabBar"
         android:layout_width="match_parent"
@@ -57,30 +71,58 @@
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@id/topBar">
 
-        <TextView
-            android:id="@+id/tabVod"
+        <LinearLayout
+            android:id="@+id/tabVodWrap"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:text="点播"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tabLive"
+            <TextView
+                android:id="@+id/tabVod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="6dp"
+                android:text="点播订阅"
+                android:textColor="#FFD4A04C"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/tabVodIndicator"
+                android:layout_width="40dp"
+                android:layout_height="3dp"
+                android:layout_marginBottom="4dp"
+                android:background="#FFD4A04C" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tabLiveWrap"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            android:text="直播"
-            android:textColor="#888888"
-            android:textSize="16sp" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tabLive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp"
+                android:paddingBottom="6dp"
+                android:text="直播订阅"
+                android:textColor="#888888"
+                android:textSize="15sp" />
+
+            <View
+                android:id="@+id/tabLiveIndicator"
+                android:layout_width="40dp"
+                android:layout_height="3dp"
+                android:layout_marginBottom="4dp"
+                android:background="#00000000" />
+        </LinearLayout>
     </LinearLayout>
 
     <!-- 列表 -->
