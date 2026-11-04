@@ -74,7 +74,7 @@ public class ApiListFragment extends Fragment {
             @Override
             public void onDelete(int position, ApiSourceAdapter.SourceItem item) {
                 // 防止删光
-                List<ApiSourceAdapter.SourceItem> current = new ArrayList<>(adapter.items);
+                List<ApiSourceAdapter.SourceItem> current = new ArrayList<>(adapter.getItems());
                 long enabledCount = current.stream().filter(i -> i.enabled).count();
                 if (item.enabled && enabledCount <= 1) {
                     Toast.makeText(getContext(), "至少保留一个配置", Toast.LENGTH_SHORT).show();

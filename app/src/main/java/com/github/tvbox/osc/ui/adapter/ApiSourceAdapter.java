@@ -50,6 +50,8 @@ public class ApiSourceAdapter extends RecyclerView.Adapter<ApiSourceAdapter.VH> 
         notifyDataSetChanged();
     }
 
+    public List<SourceItem> getItems() { return items; }
+
     @NonNull
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
