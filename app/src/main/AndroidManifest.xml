@@ -15,16 +15,6 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:scheme="content" />
-            <data android:scheme="file" />
-        </intent>
-        <package android:name="tv.danmaku.bili" />
-        <package android:name="com.tencent.drama" />
-    </queries>
-
     <application
         android:name=".base.App"
         android:allowBackup="true"
@@ -37,7 +27,7 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
 
-        <!-- 旧 HomeActivity —— 恢复为 launcher，保证 App 能正常启动 -->
+        <!-- 旧 HomeActivity —— launcher -->
         <activity
             android:name=".ui.activity.HomeActivity"
             android:exported="true"
@@ -49,7 +39,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Compose MainActivity 暂时禁用（启动崩溃问题待修复） -->
+        <!-- Compose MainActivity（暂时禁用） -->
         <activity
             android:name=".ui.MainActivity"
             android:enabled="false"
@@ -57,125 +47,58 @@
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <!-- 旧 Activity 全部恢复 enabled —— 保证完整功能 -->
-        <activity
-            android:name=".ui.activity.DetailActivity"
+        <activity android:name=".ui.activity.DetailActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.SettingActivity"
+        <activity android:name=".ui.activity.SettingActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.SourceEditActivity"
+        <activity android:name=".ui.activity.HistoryActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.ModelSettingActivity"
+        <activity android:name=".ui.activity.CollectActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.HistoryActivity"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
-
-        <activity
-            android:name=".ui.activity.CollectActivity"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
-
-        <activity
-            android:name=".ui.activity.LivePlayActivity"
+        <activity android:name=".ui.activity.LivePlayActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize" />
 
-        <activity
-            android:name=".ui.activity.SearchActivity"
+        <activity android:name=".ui.activity.SearchActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.FastSearchActivity"
+        <activity android:name=".ui.activity.FastSearchActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.PushActivity"
+        <activity android:name=".ui.activity.PushActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.LocalFileActivity"
+        <activity android:name=".ui.activity.LocalFileActivity"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
-        <activity
-            android:name=".ui.activity.LogActivity"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
+        <service android:name=".dlna.DLNACastService" android:exported="false" />
+        <service android:name=".player.MusicPlaybackService"
+            android:foregroundServiceType="mediaPlayback" android:exported="false" />
 
-        <activity
-            android:name=".ui.activity.IjkPlayerActivity"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize" />
-
-        <activity
-            android:name=".ui.activity.ExoPlayerActivity"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize" />
-
-        <activity
-            android:name=".ui.activity.PlayerActivity"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize" />
-
-        <activity
-            android:name=".ui.activity.PlayActivity"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize" />
-
-        <service
-            android:name=".dlna.DLNACastService"
-            android:exported="false" />
-
-        <service
-            android:name=".player.MusicPlaybackService"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="false" />
-
-        <receiver
-            android:name=".receiver.SearchReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.content.movie.search.Action" />
-            </intent-filter>
+        <receiver android:name=".receiver.SearchReceiver" android:exported="false">
+            <intent-filter><action android:name="android.content.movie.search.Action" /></intent-filter>
         </receiver>
-        <receiver
-            android:name=".receiver.PushReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.content.movie.push.Action" />
-            </intent-filter>
+        <receiver android:name=".receiver.PushReceiver" android:exported="false">
+            <intent-filter><action android:name="android.content.movie.push.Action" /></intent-filter>
         </receiver>
-        <receiver
-            android:name=".receiver.BootReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <provider
-            android:name="androidx.core.content.FileProvider"
+
+        <provider android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
+            android:exported="false" android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
