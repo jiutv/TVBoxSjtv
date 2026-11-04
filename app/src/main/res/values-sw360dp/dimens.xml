@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 手机版 dimens — TVBoxOS 原版 mm 单位，手机上按 ~0.8 比例缩放 -->
+<!-- 手机版 dimens — TVBoxOS 原版 mm 单位, 手机屏 360dp 约束 -->
+<!-- 大尺寸 clamp 到手机屏可用宽度, 小尺寸保持 ~0.8x -->
 <resources>
     <!-- 字体: mm → sp 约 0.8x -->
     <dimen name="ts_10">9sp</dimen>
@@ -10,19 +11,19 @@
     <dimen name="ts_20">16sp</dimen>
     <dimen name="ts_22">18sp</dimen>
     <dimen name="ts_24">19sp</dimen>
-    <dimen name="ts_26">21sp</dimen>
-    <dimen name="ts_28">22sp</dimen>
-    <dimen name="ts_30">24sp</dimen>
-    <dimen name="ts_34">27sp</dimen>
-    <dimen name="ts_40">32sp</dimen>
-    <dimen name="ts_50">40sp</dimen>
-    <dimen name="ts_100">80sp</dimen>
+    <dimen name="ts_26">15sp</dimen>
+    <dimen name="ts_28">16sp</dimen>
+    <dimen name="ts_30">17sp</dimen>
+    <dimen name="ts_34">19sp</dimen>
+    <dimen name="ts_40">22sp</dimen>
+    <dimen name="ts_50">26sp</dimen>
+    <dimen name="ts_100">40sp</dimen>
 
     <!-- 圆角 -->
     <dimen name="radius_5">4dp</dimen>
     <dimen name="radius_10">8dp</dimen>
-    <dimen name="radius_20">16dp</dimen>
-    <dimen name="preview_player_radius">8dp</dimen>
+    <dimen name="radius_20">12dp</dimen>
+    <dimen name="preview_player_radius">6dp</dimen>
     <dimen name="focus_border_1">1dp</dimen>
     <dimen name="focus_border_2">2dp</dimen>
 
@@ -32,7 +33,7 @@
     <dimen name="vs_25_">-20dp</dimen>
     <dimen name="vs_60_">-48dp</dimen>
 
-    <!-- 间距: mm → dp 约 0.8x -->
+    <!-- 间距: mm → dp 约 0.8x, 超过屏宽的 clamp 到合理值 -->
     <dimen name="vs_0">0dp</dimen>
     <dimen name="vs_1">1dp</dimen>
     <dimen name="vs_2">2dp</dimen>
@@ -46,58 +47,60 @@
     <dimen name="vs_12">10dp</dimen>
     <dimen name="vs_14">11dp</dimen>
     <dimen name="vs_15">12dp</dimen>
-    <dimen name="vs_20">16dp</dimen>
-    <dimen name="vs_24">19dp</dimen>
-    <dimen name="vs_28">22dp</dimen>
-    <dimen name="vs_30">24dp</dimen>
-    <dimen name="vs_35">28dp</dimen>
-    <dimen name="vs_40">32dp</dimen>
-    <dimen name="vs_45">36dp</dimen>
-    <dimen name="vs_48">38dp</dimen>
-    <dimen name="vs_50">40dp</dimen>
-    <dimen name="vs_60">48dp</dimen>
-    <dimen name="vs_70">56dp</dimen>
-    <dimen name="vs_76">61dp</dimen>
-    <dimen name="vs_80">64dp</dimen>
-    <dimen name="vs_90">72dp</dimen>
-    <dimen name="vs_100">80dp</dimen>
-    <dimen name="vs_108">86dp</dimen>
-    <dimen name="vs_120">96dp</dimen>
-    <dimen name="vs_128">102dp</dimen>
-    <dimen name="vs_130">104dp</dimen>
-    <dimen name="vs_140">112dp</dimen>
-    <dimen name="vs_150">120dp</dimen>
-    <dimen name="vs_160">128dp</dimen>
-    <dimen name="vs_162">130dp</dimen>
-    <dimen name="vs_165">132dp</dimen>
-    <dimen name="vs_170">136dp</dimen>
-    <dimen name="vs_180">144dp</dimen>
-    <dimen name="vs_190">152dp</dimen>
-    <dimen name="vs_200">160dp</dimen>
-    <dimen name="vs_204">163dp</dimen>
-    <dimen name="vs_214">171dp</dimen>
-    <dimen name="vs_220">176dp</dimen>
-    <dimen name="vs_230">184dp</dimen>
-    <dimen name="vs_240">192dp</dimen>
-    <dimen name="vs_250">200dp</dimen>
-    <dimen name="vs_270">216dp</dimen>
-    <dimen name="vs_272">218dp</dimen>
-    <dimen name="vs_280">224dp</dimen>
-    <dimen name="vs_300">240dp</dimen>
-    <dimen name="vs_320">256dp</dimen>
-    <dimen name="vs_340">272dp</dimen>
-    <dimen name="vs_360">288dp</dimen>
-    <dimen name="vs_390">312dp</dimen>
-    <dimen name="vs_400">320dp</dimen>
-    <dimen name="vs_410">328dp</dimen>
-    <dimen name="vs_420">336dp</dimen>
-    <dimen name="vs_440">352dp</dimen>
-    <dimen name="vs_470">376dp</dimen>
-    <dimen name="vs_480">384dp</dimen>
-    <dimen name="vs_520">416dp</dimen>
-    <dimen name="vs_600">480dp</dimen>
-    <dimen name="vs_610">488dp</dimen>
-    <dimen name="vs_640">512dp</dimen>
-    <dimen name="vs_720">576dp</dimen>
-    <dimen name="vs_960">768dp</dimen>
+    <dimen name="vs_20">14dp</dimen>
+    <dimen name="vs_24">16dp</dimen>
+    <dimen name="vs_28">18dp</dimen>
+    <dimen name="vs_30">20dp</dimen>
+    <dimen name="vs_35">24dp</dimen>
+    <dimen name="vs_40">28dp</dimen>
+    <dimen name="vs_45">30dp</dimen>
+    <dimen name="vs_48">32dp</dimen>
+    <dimen name="vs_50">36dp</dimen>
+    <dimen name="vs_60">40dp</dimen>
+    <dimen name="vs_70">44dp</dimen>
+    <dimen name="vs_76">48dp</dimen>
+    <dimen name="vs_80">52dp</dimen>
+    <dimen name="vs_90">56dp</dimen>
+    <dimen name="vs_100">60dp</dimen>
+    <dimen name="vs_108">64dp</dimen>
+    <dimen name="vs_120">70dp</dimen>
+    <dimen name="vs_128">74dp</dimen>
+    <dimen name="vs_130">76dp</dimen>
+    <dimen name="vs_140">80dp</dimen>
+    <dimen name="vs_150">86dp</dimen>
+    <dimen name="vs_160">92dp</dimen>
+    <dimen name="vs_162">92dp</dimen>
+    <dimen name="vs_165">94dp</dimen>
+    <dimen name="vs_170">96dp</dimen>
+    <dimen name="vs_180">100dp</dimen>
+    <dimen name="vs_190">106dp</dimen>
+    <dimen name="vs_200">110dp</dimen>
+    <dimen name="vs_204">112dp</dimen>
+    <dimen name="vs_214">116dp</dimen>
+    <dimen name="vs_220">120dp</dimen>
+    <dimen name="vs_230">124dp</dimen>
+    <dimen name="vs_240">128dp</dimen>
+    <dimen name="vs_250">134dp</dimen>
+    <dimen name="vs_270">144dp</dimen>
+    <dimen name="vs_272">144dp</dimen>
+    <dimen name="vs_280">150dp</dimen>
+    <!-- vs_300+: 大尺寸 clamp, 手机屏才 360dp -->
+    <dimen name="vs_300">160dp</dimen>
+    <dimen name="vs_320">170dp</dimen>
+    <dimen name="vs_340">180dp</dimen>
+    <dimen name="vs_360">190dp</dimen>
+    <dimen name="vs_390">200dp</dimen>
+    <dimen name="vs_400">210dp</dimen>
+    <dimen name="vs_410">220dp</dimen>
+    <dimen name="vs_420">220dp</dimen>
+    <dimen name="vs_440">230dp</dimen>
+    <dimen name="vs_470">250dp</dimen>
+    <dimen name="vs_480">250dp</dimen>
+    <dimen name="vs_520">270dp</dimen>
+    <!-- vs_600+: 对话框 wrap_content 宽度, clamp 到 match_parent 等价 -->
+    <dimen name="vs_600">280dp</dimen>
+    <dimen name="vs_610">280dp</dimen>
+    <dimen name="vs_640">280dp</dimen>
+    <dimen name="vs_720">320dp</dimen>
+    <dimen name="vs_960">340dp</dimen>
 </resources>

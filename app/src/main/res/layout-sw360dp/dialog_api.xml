@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- 手机版对话框: 单列, 无二维码 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_danmu_setting_bg"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 二维码 (隐藏, 保留ID避免Java NPE) -->
+        <ImageView
+            android:id="@+id/ivQRCode"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+
+        <!-- 地址文字 (手机上也隐藏) -->
+        <TextView
+            android:id="@+id/tvAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <!-- 标题 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:text="配置地址"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- 点播输入 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="点播地址"
+            android:textColor="#BBFFFFFF"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/input_dialog_api_input"
+                android:hint="请输入点播配置地址"
+                android:imeOptions="actionNext"
+                android:inputType="textUri"
+                android:nextFocusDown="@id/inputLive"
+                android:nextFocusForward="@id/inputLive"
+                android:singleLine="true"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="10dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#66FFFFFF"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/inputSubmit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/button_danmu_setting"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="10dp"
+                android:text="选择文件"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- 直播输入 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="直播地址 (可选)"
+            android:textColor="#BBFFFFFF"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/inputLive"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/input_dialog_api_input"
+                android:hint="请输入直播配置地址 (留空同步点播)"
+                android:imeOptions="actionDone"
+                android:inputType="textUri"
+                android:singleLine="true"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="10dp"
+                android:textColor="#FFFFFF"
+                android:textColorHint="#66FFFFFF"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/inputSubmitLive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/button_danmu_setting"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:paddingRight="12dp"
+                android:paddingBottom="10dp"
+                android:text="选择文件"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- 功能按钮 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/apiHistory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/button_danmu_setting"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="直播历史"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/storagePermission"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/button_danmu_setting"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="10dp"
+                android:text="存储权限"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- 确定按钮 (底部, 手机上必须可见!) -->
+        <TextView
+            android:id="@+id/inputConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_danmu_setting"
+            android:focusable="true"
+            android:gravity="center"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:text="确  定"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</FrameLayout>
