@@ -747,8 +747,8 @@ public class HomeActivity extends BaseActivity {
         if (tvName == null || tvDate == null) {
             return;
         }
-        tvName.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.ts_30));
-        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.ts_26));
+        tvName.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.ts_20));
+        tvDate.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.ts_18));
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
