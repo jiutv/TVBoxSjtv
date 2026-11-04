@@ -88,11 +88,11 @@ public class HomeActivity extends BaseActivity {
     private TextView tvWifi;
     private TextView btnSite;
     private TextView btnSearch;
-    private TextView btnHistory;
-    private TextView btnCollect;
-    private TextView btnLive;
-    private TextView btnPush;
-    private TextView btnSetting;
+    private View btnHistory;
+    private View btnCollect;
+    private View btnLive;
+    private View btnPush;
+    private View btnSetting;
     private View btnHome;
     private TvRecyclerView mGridView;
     private NoScrollViewPager mViewPager;
