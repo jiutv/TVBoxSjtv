@@ -117,6 +117,9 @@ public class HomeActivity extends BaseActivity {
         @SuppressLint("SetTextI18n")
         @Override
         public void run() {
+            if (tvDate == null || tvDate.getVisibility() != View.VISIBLE) {
+                return;
+            }
             Date date = new Date();
             SimpleDateFormat timeFormat = new SimpleDateFormat("E  HH:mm", Locale.CHINA);
             tvDate.setText(timeFormat.format(date));
