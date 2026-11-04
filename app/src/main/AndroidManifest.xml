@@ -32,9 +32,9 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
 
-        <!-- Compose 主入口 -->
+        <!-- ✅ HomeActivity 做 launcher — 旧 Java 内核，100% 能加载数据 -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.activity.HomeActivity"
             android:exported="true"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize">
@@ -44,64 +44,51 @@
             </intent-filter>
         </activity>
 
-        <!-- 旧 Activity 暂时保留（enabled=false），等对应 Compose 页面完成后再删除 -->
-        <activity
-            android:name=".ui.activity.HomeActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
-
-        <activity
-            android:name=".ui.activity.LivePlayActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
-
+        <!-- ✅ 全部恢复 enabled=true — 旧 Java 内核必须能用 -->
         <activity
             android:name=".ui.activity.DetailActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="sensorPortrait" />
 
         <activity
-            android:name=".ui.activity.PushActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
+            android:name=".ui.activity.SettingActivity"
+            android:screenOrientation="sensorPortrait" />
 
         <activity
             android:name=".ui.activity.SearchActivity"
-            android:enabled="false"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:screenOrientation="sensorPortrait" />
 
         <activity
             android:name=".ui.activity.FastSearchActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
+            android:screenOrientation="sensorPortrait" />
 
         <activity
-            android:name=".ui.activity.SettingActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
+            android:name=".ui.activity.LivePlayActivity"
+            android:configChanges="orientation|keyboardHidden|screenLayout|smallestScreenSize"
+            android:screenOrientation="sensorPortrait" />
 
         <activity
             android:name=".ui.activity.HistoryActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
+            android:screenOrientation="sensorPortrait" />
 
         <activity
             android:name=".ui.activity.CollectActivity"
-            android:enabled="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
+            android:screenOrientation="sensorPortrait" />
+
+        <activity
+            android:name=".ui.activity.PushActivity"
+            android:screenOrientation="sensorPortrait" />
 
         <activity
             android:name=".ui.activity.LocalFileActivity"
+            android:screenOrientation="sensorPortrait" />
+
+        <!-- ❌ Compose MainActivity — 暂时禁用，数据桥接修好再启用 -->
+        <activity
+            android:name=".ui.MainActivity"
             android:enabled="false"
+            android:exported="false"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
@@ -160,5 +147,4 @@
             android:name="xwalk_verify"
             android:value="disable" />
     </application>
-
 </manifest>
