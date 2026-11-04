@@ -32,9 +32,9 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
 
-        <!-- Compose MainActivity — 新 UI launcher -->
+        <!-- ✅ HomeActivity 做 launcher — 纯 Java 内核 -->
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.activity.HomeActivity"
             android:exported="true"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize">
@@ -43,14 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- 旧 HomeActivity — 保留做 fallback（MainActivity 崩溃时跳转） -->
-        <activity
-            android:name=".ui.activity.HomeActivity"
-            android:enabled="true"
-            android:exported="false"
-            android:screenOrientation="sensorPortrait"
-            android:configChanges="orientation|screenSize" />
 
         <activity
             android:name=".ui.activity.DetailActivity"
