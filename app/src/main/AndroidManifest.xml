@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.github.tvbox.osc.jun">
+    package="com.github.tvbox.osc">
 
     <uses-feature
         android:name="android.software.leanback"
         android:required="false" />
     <uses-feature
         android:name="android.hardware.touchscreen"
-        android:required="false" />
+        android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -22,7 +22,6 @@
     <application
         android:name=".base.App"
         android:allowBackup="true"
-        android:banner="@drawable/app_banner"
         android:configChanges="orientation|keyboardHidden|screenSize"
         android:hardwareAccelerated="true"
         android:icon="@drawable/app_icon"
@@ -33,51 +32,76 @@
         android:theme="@style/AppTheme.NoActionBar"
         android:usesCleartextTraffic="true">
 
+        <!-- Compose 主入口 -->
         <activity
-            android:name=".ui.activity.HomeActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- 旧 Activity 暂时保留（enabled=false），等对应 Compose 页面完成后再删除 -->
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.LivePlayActivity"
-            android:screenOrientation="sensorPortrait" />
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.DetailActivity"
-            android:configChanges="orientation|screenSize"
-            android:screenOrientation="sensorPortrait" />
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.PushActivity"
-            android:screenOrientation="sensorPortrait" />
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.SearchActivity"
+            android:enabled="false"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:screenOrientation="sensorPortrait" />
+
         <activity
             android:name=".ui.activity.FastSearchActivity"
-            android:screenOrientation="sensorPortrait" />
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.SettingActivity"
-            android:screenOrientation="sensorPortrait" />
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.HistoryActivity"
-            android:screenOrientation="sensorPortrait" />
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.CollectActivity"
-            android:screenOrientation="sensorPortrait" />
+            android:enabled="false"
+            android:screenOrientation="sensorPortrait"
+            android:configChanges="orientation|screenSize" />
+
         <activity
             android:name=".ui.activity.LocalFileActivity"
-            android:screenOrientation="sensorPortrait" />
-
-        <!-- Compose MainActivity — 暂时禁用，等崩溃修复后恢复 -->
-        <activity
-            android:name=".ui.MainActivity"
             android:enabled="false"
-            android:exported="false"
             android:screenOrientation="sensorPortrait"
             android:configChanges="orientation|screenSize" />
 
@@ -124,9 +148,17 @@
 
         <meta-data
             android:name="design_width_in_dp"
-            android:value="1280" />
+            android:value="1080" />
         <meta-data
             android:name="design_height_in_dp"
-            android:value="720" />
+            android:value="1920" />
+
+        <meta-data
+            android:name="xwalk_enable_download_mode"
+            android:value="enable" />
+        <meta-data
+            android:name="xwalk_verify"
+            android:value="disable" />
     </application>
+
 </manifest>
