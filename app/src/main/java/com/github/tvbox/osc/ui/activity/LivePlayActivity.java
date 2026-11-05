@@ -348,7 +348,6 @@ public class LivePlayActivity extends BaseActivity {
         if (backcontroller != null)
             backcontroller.setVisibility(View.VISIBLE);
         if (tv_shownum != null) tv_shownum.setVisibility(View.GONE);
-        if (tv_showTime != null) tv_showTime.setVisibility(View.GONE);
         if (tvTime != null) tvTime.setVisibility(View.GONE);
         if (tvNetSpeed != null) tvNetSpeed.setVisibility(View.GONE);
         if (tvResolution != null) tvResolution.setVisibility(View.GONE);
