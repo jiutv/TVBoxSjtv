@@ -2,7 +2,6 @@ package com.github.tvbox.osc.ui.activity;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -89,26 +88,13 @@ public class HistoryActivity extends BaseActivity {
                 dialog.show();
             }
         });
-        mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
-            @Override
-            public boolean onInBorderKeyEvent(int direction, View focused) {
-                if (direction == View.FOCUS_UP) {
-                    tvDelete.setFocusable(true);
-                    tvClear.setFocusable(true);
-                    tvDelete.requestFocus();
-                }
-                return false;
-            }
-        });
         mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
             @Override
             public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                itemView.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                itemView.animate().scaleX(1.05f).scaleY(1.05f).setDuration(300).setInterpolator(new BounceInterpolator()).start();
             }
 
             @Override

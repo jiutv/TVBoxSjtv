@@ -12,7 +12,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -70,8 +69,6 @@ public class FastSearchActivity extends BaseActivity {
     private static final int SEARCH_PUMP_SECONDS = 2;
     private static final int SEARCH_NEXT_BATCH_SECONDS = 3;
     private static final int SEARCH_SITE_TIMEOUT_SECONDS = 10;
-    private static final long POSTER_FOCUS_ANIM_DURATION = 300L;
-    private static final float POSTER_FOCUS_SCALE = 1.05f;
     private static final String SEARCH_ALL_NAME = "\u5168\u90e8";
     private LinearLayout llLayout;
     private TextView mSearchTitle;
@@ -147,18 +144,11 @@ public class FastSearchActivity extends BaseActivity {
 
             @Override
             public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                selectWord(spListAdapter.getItem(position));
             }
 
             @Override
             public void onItemClick(TvRecyclerView parent, View itemView, int position) {
                 selectWord(spListAdapter.getItem(position));
-            }
-        });
-        mGridViewWord.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
-            @Override
-            public boolean onInBorderKeyEvent(int direction, View view) {
-                return direction == View.FOCUS_UP;
             }
         });
 
@@ -167,21 +157,6 @@ public class FastSearchActivity extends BaseActivity {
 
         searchAdapter = new FastSearchAdapter();
         mGridView.setAdapter(searchAdapter);
-        mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
-            @Override
-            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                setPosterFocusScale(itemView, false);
-            }
-
-            @Override
-            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                setPosterFocusScale(itemView, true);
-            }
-
-            @Override
-            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-            }
-        });
 
         searchAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -205,21 +180,6 @@ public class FastSearchActivity extends BaseActivity {
         mGridViewFilter.setLayoutManager(new V7GridLayoutManager(this.mContext, 3));
         searchAdapterFilter = new FastSearchAdapter();
         mGridViewFilter.setAdapter(searchAdapterFilter);
-        mGridViewFilter.setOnItemListener(new TvRecyclerView.OnItemListener() {
-            @Override
-            public void onItemPreSelected(TvRecyclerView parent, View itemView, int position) {
-                setPosterFocusScale(itemView, false);
-            }
-
-            @Override
-            public void onItemSelected(TvRecyclerView parent, View itemView, int position) {
-                setPosterFocusScale(itemView, true);
-            }
-
-            @Override
-            public void onItemClick(TvRecyclerView parent, View itemView, int position) {
-            }
-        });
         searchAdapterFilter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -253,20 +213,6 @@ public class FastSearchActivity extends BaseActivity {
             }
         });
         searchWordAdapter.setNewData(new ArrayList<>());
-    }
-
-    private void setPosterFocusScale(View itemView, boolean focused) {
-        if (itemView == null) return;
-        if (focused) {
-            itemView.bringToFront();
-        }
-        float scale = focused ? POSTER_FOCUS_SCALE : 1.0f;
-        itemView.animate()
-                .scaleX(scale)
-                .scaleY(scale)
-                .setDuration(POSTER_FOCUS_ANIM_DURATION)
-                .setInterpolator(new BounceInterpolator())
-                .start();
     }
 
     private void initViewModel() {

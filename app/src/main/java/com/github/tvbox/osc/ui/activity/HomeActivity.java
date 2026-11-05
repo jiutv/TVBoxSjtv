@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.BounceInterpolator;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -211,40 +210,16 @@ public class HomeActivity extends BaseActivity {
             }
         });
         this.mGridView.setOnItemListener(new TvRecyclerView.OnItemListener() {
+            @Override
             public void onItemPreSelected(TvRecyclerView tvRecyclerView, View view, int position) {
-                if (view != null && !HomeActivity.this.isDownOrUp) {
-                    mHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView textView = view.findViewById(R.id.tvTitle);
-                            textView.getPaint().setFakeBoldText(false);
-                            if (sortFocused == p) {
-                                view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(300).start();
-                                textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
-                            } else {
-                                view.animate().scaleX(1.0f).scaleY(1.0f).setDuration(300).start();
-                                textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_BBFFFFFF));
-                                view.findViewById(R.id.tvFilter).setVisibility(View.GONE);
-                                view.findViewById(R.id.tvFilterColor).setVisibility(View.GONE);
-                            }
-                            textView.invalidate();
-                        }
-
-                        public final int p = position;
-                    }, 10);
-                }
             }
 
+            @Override
             public void onItemSelected(TvRecyclerView tvRecyclerView, View view, int position) {
                 if (view != null) {
                     HomeActivity.this.currentView = view;
                     HomeActivity.this.isDownOrUp = false;
                     HomeActivity.this.sortChange = true;
-                    view.animate().scaleX(1.1f).scaleY(1.1f).setInterpolator(new BounceInterpolator()).setDuration(300).start();
-                    TextView textView = view.findViewById(R.id.tvTitle);
-                    textView.getPaint().setFakeBoldText(true);
-                    textView.setTextColor(HomeActivity.this.getResources().getColor(R.color.color_FFFFFF));
-                    textView.invalidate();
                     MovieSort.SortData sortData = sortAdapter.getItem(position);
                     if (!sortData.filters.isEmpty()) {
                         showFilterIcon(sortData.filterSelectCount());
@@ -266,30 +241,6 @@ public class HomeActivity extends BaseActivity {
                         showSiteSwitch();
                     }
                 }
-            }
-        });
-
-        this.mGridView.setOnInBorderKeyEventListener(new TvRecyclerView.OnInBorderKeyEventListener() {
-            public boolean onInBorderKeyEvent(int direction, View view) {
-                if (direction == View.FOCUS_UP) {
-                    BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
-                    if (baseLazyFragment instanceof UserFragment) {
-                        refreshHomeSort();
-                        return true;
-                    }
-                    if (baseLazyFragment instanceof GridFragment) {
-                        ((GridFragment) baseLazyFragment).forceRefresh();
-                        return true;
-                    }
-                }
-                if (direction != View.FOCUS_DOWN) {
-                    return false;
-                }
-                BaseLazyFragment baseLazyFragment = fragments.get(sortFocused);
-                if (!(baseLazyFragment instanceof GridFragment)) {
-                    return false;
-                }
-                return !((GridFragment) baseLazyFragment).isLoad();
             }
         });
         tvName.setOnClickListener(new View.OnClickListener() {
