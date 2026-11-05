@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF121212">
+    android:background="@drawable/bg_home_root">
 
     <!-- 顶部区：站点名 + 搜索 + 站点切换 + 分类Tab -->
     <LinearLayout
@@ -40,24 +40,22 @@
                 android:text="加载中..."
                 android:textAlignment="gravity"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/ts_20"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/btnSite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button_nav_focus"
+                android:background="@drawable/bg_btn_capsule"
                 android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
                 android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
                 android:text="站点"
-                android:textColor="#BBFFFFFF"
+                android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
             <TextView
@@ -65,17 +63,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
-                android:background="@drawable/button_nav_focus"
+                android:background="@drawable/bg_btn_capsule"
                 android:clickable="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
                 android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
                 android:text="搜索"
-                android:textColor="#BBFFFFFF"
+                android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
 
         </LinearLayout>

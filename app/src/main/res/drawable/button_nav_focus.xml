@@ -2,13 +2,19 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_focused="true">
         <shape>
-            <corners android:radius="10dp"/>
-            <solid android:color="@color/color_nav_focus"/>
+            <corners android:radius="20dp"/>
+            <solid android:color="@color/bg_capsule"/>
         </shape>
     </item>
-    <item android:state_focused="false">
+    <item android:state_pressed="true">
         <shape>
-            <corners android:radius="10dp"/>
+            <corners android:radius="20dp"/>
+            <solid android:color="@color/bg_capsule_pressed"/>
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <corners android:radius="20dp"/>
             <solid android:color="@android:color/transparent"/>
         </shape>
     </item>

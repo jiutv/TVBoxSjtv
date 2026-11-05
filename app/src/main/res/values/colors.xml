@@ -53,6 +53,20 @@
     <color name="dialog_text_primary">#FFFFFFFF</color>
     <color name="dialog_text_hint">#80FFFFFF</color>
 
-
-
+    <!-- Modern dark theme palette -->
+    <color name="bg_dark">#FF0E0E10</color>
+    <color name="bg_card">#FF1A1A1E</color>
+    <color name="bg_card_alt">#FF1E1E24</color>
+    <color name="bg_capsule">#33FFFFFF</color>
+    <color name="bg_capsule_pressed">#55FFFFFF</color>
+    <color name="accent_purple">#FF7B5CFC</color>
+    <color name="accent_blue">#FF4F8CFF</color>
+    <color name="accent_pink">#FFFF5CAF</color>
+    <color name="gradient_start">#FF7B5CFC</color>
+    <color name="gradient_end">#FF4F8CFF</color>
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#CCFFFFFF</color>
+    <color name="text_hint">#66FFFFFF</color>
+    <color name="divider">#1AFFFFFF</color>
+    <color name="overlay_bottom">#CC000000</color>
 </resources>
