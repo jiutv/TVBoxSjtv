@@ -236,15 +236,15 @@
 					android:id="@+id/mEpgDateGridView"
 					android:layout_width="@dimen/vs_100"
 					android:layout_height="wrap_content"
-					android:paddingLeft="5mm"
-					android:paddingTop="10mm"
-					android:paddingRight="5mm"
-					android:paddingBottom="10mm"
+					android:paddingLeft="4dp"
+					android:paddingTop="8dp"
+					android:paddingRight="4dp"
+					android:paddingBottom="8dp"
 					android:visibility="visible"
 					android:listSelector="@drawable/item_bg_selector_right"
 					android:layout_gravity="center_vertical"
 					app:tv_selectedItemIsCentered="true"
-					app:tv_verticalSpacingWithMargins="10mm" />
+					app:tv_verticalSpacingWithMargins="8dp" />
 				<com.owen.tvrecyclerview.widget.TvRecyclerView
 					android:id="@+id/lv_epg"
 					android:layout_width="match_parent"
@@ -255,7 +255,7 @@
 					app:tv_selectedItemIsCentered="true"
 					android:visibility="visible"
 					android:scrollbars = "vertical"
-					app:tv_verticalSpacingWithMargins="10mm" />
+					app:tv_verticalSpacingWithMargins="8dp" />
 
 				<TextView
 					android:id="@+id/txtNoEpg"
@@ -298,7 +298,7 @@
             android:scrollbars="none"
             android:visibility="visible"
             app:tv_selectedItemIsCentered="true"
-            app:tv_verticalSpacingWithMargins="4mm" />
+            app:tv_verticalSpacingWithMargins="3dp" />
 
         <View
             android:layout_width="1dp"
@@ -319,7 +319,7 @@
             android:scrollbars="none"
             android:visibility="visible"
             app:tv_selectedItemIsCentered="true"
-            app:tv_verticalSpacingWithMargins="4mm" />
+            app:tv_verticalSpacingWithMargins="3dp" />
     </LinearLayout>
 
     <TextView
@@ -327,14 +327,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_marginTop="30mm"
-        android:layout_marginRight="60mm"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="48dp"
         android:background="@drawable/shape_live_channel_num"
         android:gravity="center"
-        android:paddingTop="5mm"
-        android:paddingBottom="5mm"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:textColor="@android:color/white"
-        android:textSize="36mm"
+        android:textSize="29sp"
         android:textStyle="bold"
         android:visibility="gone" />
 
@@ -342,8 +342,8 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="right|top"
-		android:layout_marginTop="5mm"
-		android:layout_marginRight="20mm"
+		android:layout_marginTop="4dp"
+		android:layout_marginRight="16dp"
 		android:gravity="center_vertical"
 		android:orientation="horizontal">
 
@@ -358,7 +358,7 @@
 			android:minWidth="@dimen/vs_120"
 			android:textAlignment="viewEnd"
 			android:textColor="@android:color/white"
-			android:textSize="22mm"
+			android:textSize="18sp"
 			android:visibility="gone"
 			tools:text="968bps"
 			tools:ignore="RtlCompat" />
@@ -371,7 +371,7 @@
 			android:gravity="center"
 			android:includeFontPadding="false"
 			android:textColor="@android:color/white"
-			android:textSize="22mm"
+			android:textSize="18sp"
 			android:visibility="gone" />
 	</LinearLayout>
 
@@ -409,8 +409,8 @@
 			android:layout_alignParentLeft="true"
 			android:layout_alignParentTop="true"
 			android:layout_gravity="center"
-			android:layout_marginLeft="20mm"
-			android:layout_marginTop="5mm"
+			android:layout_marginLeft="16dp"
+			android:layout_marginTop="4dp"
 			android:layout_marginBottom="-14dp"
 			android:ellipsize="marquee"
 			android:gravity="center"
@@ -735,8 +735,8 @@
 		android:background="@drawable/shape_user_search"
 		android:layout_width="@dimen/vs_240"
 		android:layout_height="@dimen/vs_70"
-		android:layout_marginTop="25mm"
-		android:layout_marginRight="25mm"
+		android:layout_marginTop="20dp"
+		android:layout_marginRight="20dp"
 		android:minWidth="270px">
 		<ImageView
 			android:id="@+id/iv_circle_bg"
@@ -767,7 +767,7 @@
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:layout_alignParentBottom="true"
-		android:layout_marginBottom="10mm"
+		android:layout_marginBottom="8dp"
 		android:visibility="visible"
 		android:elevation="10dp"
 		android:background="@android:color/transparent">
