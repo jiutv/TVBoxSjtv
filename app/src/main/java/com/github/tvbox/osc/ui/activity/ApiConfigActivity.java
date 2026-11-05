@@ -102,20 +102,24 @@ public class ApiConfigActivity extends BaseActivity {
     private void showAddDialog() {
         final int currentTab = viewPager.getCurrentItem();
         AddSourceDialog dialog = new AddSourceDialog(this);
-        dialog.setOnSaveListener((name, url) -> {
+        dialog.setOnSaveListener((name, url, enableNow) -> {
             List<String> list = Hawk.get(currentTab == 0 ? HawkConfig.API_HISTORY : HawkConfig.LIVE_API_HISTORY, new ArrayList<String>());
             if (!list.contains(url)) list.add(0, url);
             if (currentTab == 0) {
                 Hawk.put(HawkConfig.API_HISTORY, list);
-                HistoryHelper.setApiHistory(url);
-                Hawk.put(HawkConfig.API_URL, url);
-                Hawk.put(HawkConfig.LIVE_API_URL, url);
+                if (enableNow) {
+                    HistoryHelper.setApiHistory(url);
+                    Hawk.put(HawkConfig.API_URL, url);
+                    Hawk.put(HawkConfig.LIVE_API_URL, url);
+                }
             } else {
                 Hawk.put(HawkConfig.LIVE_API_HISTORY, list);
-                HistoryHelper.setLiveApiHistory(url);
-                Hawk.put(HawkConfig.LIVE_API_URL, url);
+                if (enableNow) {
+                    Hawk.put(HawkConfig.LIVE_API_URL, url);
+                }
             }
-            Toast.makeText(this, "已添加并启用", Toast.LENGTH_SHORT).show();
+            if (enableNow) Toast.makeText(this, "已添加并启用", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(this, "已添加到列表", Toast.LENGTH_SHORT).show();
             vodFragment.loadData();
             liveFragment.loadData();
         });
