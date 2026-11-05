@@ -44,8 +44,8 @@ import me.jessyan.autosize.utils.AutoSizeUtils;
 
 public class ImgUtil {
     private static final Map<String, Drawable> drawableCache = new HashMap<>();
-    public static int defaultWidth = 244;
-    public static int defaultHeight = 320;
+    public static int defaultWidth = 195;
+    public static int defaultHeight = 256;
 
     public static class Style {
         public float ratio;
@@ -182,7 +182,7 @@ public class ImgUtil {
     }
 
     public static Drawable createTextDrawable(String text) {
-        return createTextDrawable(text, 0, 0, AutoSizeUtils.mm2px(App.getInstance(), 10));
+        return createTextDrawable(text, 0, 0, AutoSizeUtils.dp2px(App.getInstance(), 8));
     }
 
     private static Drawable createTextDrawable(String text, int width, int height, float cornerRadius) {

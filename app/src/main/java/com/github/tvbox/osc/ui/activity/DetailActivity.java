@@ -204,7 +204,7 @@ public class DetailActivity extends BaseActivity {
         mEmptyPlayList = findViewById(R.id.mEmptyPlaylist);
         mGridView = findViewById(R.id.mGridView);
         mGridView.setHasFixedSize(false);
-        this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 6);
+        this.mGridViewLayoutMgr = new V7GridLayoutManager(this.mContext, 3);
         mGridView.setLayoutManager(this.mGridViewLayoutMgr);
 //        mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 0, false));
 
@@ -895,7 +895,7 @@ public class DetailActivity extends BaseActivity {
                     setTextShow(tvDirector, "导演：", removeHtmlTag(mVideo.director));
                     setTextShow(tvDes, "内容简介：", removeHtmlTag(mVideo.des));
                     if (!TextUtils.isEmpty(mVideo.pic)) {
-                        com.github.tvbox.osc.util.ImgUtil.load(DefaultConfig.checkReplaceProxy(mVideo.pic), ivThumb, AutoSizeUtils.mm2px(mContext, 10), AutoSizeUtils.mm2px(mContext, 300), AutoSizeUtils.mm2px(mContext, 400), mVideo.name);
+                        com.github.tvbox.osc.util.ImgUtil.load(DefaultConfig.checkReplaceProxy(mVideo.pic), ivThumb, AutoSizeUtils.dp2px(mContext, 8), AutoSizeUtils.dp2px(mContext, 240), AutoSizeUtils.dp2px(mContext, 320), mVideo.name);
                     } else {
                         ivThumb.setImageDrawable(com.github.tvbox.osc.util.ImgUtil.createTextDrawable(mVideo.name));
                     }

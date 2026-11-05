@@ -42,7 +42,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
                 if (ImgUtil.isBase64Image(pic)) {
                     ivThumb.setImageBitmap(ImgUtil.decodeBase64ToBitmap(pic));
                 } else {
-                    ImgUtil.load(pic, ivThumb, AutoSizeUtils.mm2px(mContext, 10), AutoSizeUtils.mm2px(mContext, 240), AutoSizeUtils.mm2px(mContext, 336), item.name);
+                    ImgUtil.load(pic, ivThumb, AutoSizeUtils.dp2px(mContext, 8), AutoSizeUtils.dp2px(mContext, 192), AutoSizeUtils.dp2px(mContext, 269), item.name);
                 }
             } else {
                 ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
@@ -81,7 +81,7 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             if (ImgUtil.isBase64Image(pic)) {
                 ivThumb.setImageBitmap(ImgUtil.decodeBase64ToBitmap(pic));
             } else {
-                ImgUtil.load(pic, ivThumb, AutoSizeUtils.mm2px(mContext, 10), AutoSizeUtils.mm2px(mContext, newWidth), AutoSizeUtils.mm2px(mContext, newHeight), item.name);
+                ImgUtil.load(pic, ivThumb, AutoSizeUtils.dp2px(mContext, 8), AutoSizeUtils.dp2px(mContext, newWidth), AutoSizeUtils.dp2px(mContext, newHeight), item.name);
             }
         } else {
             ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
@@ -95,8 +95,8 @@ public class GridAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHolder> {
             int width = defaultWidth;
             int height = (int) (width / style.ratio);
             ViewGroup.LayoutParams containerParams = container.getLayoutParams();
-            containerParams.height = AutoSizeUtils.mm2px(mContext, height);
-            containerParams.width = AutoSizeUtils.mm2px(mContext, width);
+            containerParams.height = AutoSizeUtils.dp2px(mContext, height);
+            containerParams.width = AutoSizeUtils.dp2px(mContext, width);
             container.setLayoutParams(containerParams);
         }
     }

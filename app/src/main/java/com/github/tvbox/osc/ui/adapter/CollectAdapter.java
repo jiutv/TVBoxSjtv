@@ -39,7 +39,7 @@ public class CollectAdapter extends BaseQuickAdapter<VodCollect, BaseViewHolder>
 
         ImageView ivThumb = helper.getView(R.id.ivThumb);
         if (!TextUtils.isEmpty(item.pic)) {
-            ImgUtil.load(item.pic, ivThumb, AutoSizeUtils.mm2px(mContext, 10), AutoSizeUtils.mm2px(mContext, 240), AutoSizeUtils.mm2px(mContext, 336), item.name);
+            ImgUtil.load(item.pic, ivThumb, AutoSizeUtils.dp2px(mContext, 8), AutoSizeUtils.dp2px(mContext, 192), AutoSizeUtils.dp2px(mContext, 269), item.name);
         } else {
             ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }

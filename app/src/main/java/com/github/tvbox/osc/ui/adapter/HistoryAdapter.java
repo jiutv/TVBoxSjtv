@@ -42,7 +42,7 @@ public class HistoryAdapter extends BaseQuickAdapter<VodInfo, BaseViewHolder> {
         helper.setText(R.id.tvName, item.name);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
         if (!TextUtils.isEmpty(item.pic)) {
-            ImgUtil.load(item.pic, ivThumb, AutoSizeUtils.mm2px(mContext, 10), AutoSizeUtils.mm2px(mContext, ImgUtil.defaultWidth), AutoSizeUtils.mm2px(mContext, ImgUtil.defaultHeight), item.name);
+            ImgUtil.load(item.pic, ivThumb, AutoSizeUtils.dp2px(mContext, 8), AutoSizeUtils.dp2px(mContext, ImgUtil.defaultWidth), AutoSizeUtils.dp2px(mContext, ImgUtil.defaultHeight), item.name);
         } else {
             ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
         }

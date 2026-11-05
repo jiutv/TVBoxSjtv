@@ -141,7 +141,7 @@ public class HomeActivity extends BaseActivity {
             }
             hideSysBar();
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) topLayout.getLayoutParams();
-            params.topMargin = AutoSizeUtils.mm2px(HomeActivity.this, 10.0f);
+            params.topMargin = AutoSizeUtils.dp2px(HomeActivity.this, 8);
             params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             topLayout.setLayoutParams(params);
             topLayout.setAlpha(1.0f);

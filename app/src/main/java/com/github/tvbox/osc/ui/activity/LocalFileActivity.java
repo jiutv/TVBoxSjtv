@@ -50,7 +50,7 @@ public class LocalFileActivity extends BaseActivity {
         adapter = new LocalFileAdapter();
         fileList.setAdapter(adapter);
         fileList.setLayoutManager(new V7LinearLayoutManager(this, 1, false));
-        fileList.setSpacingWithMargins(0, AutoSizeUtils.mm2px(this, 8));
+        fileList.setSpacingWithMargins(0, AutoSizeUtils.dp2px(this, 6));
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {

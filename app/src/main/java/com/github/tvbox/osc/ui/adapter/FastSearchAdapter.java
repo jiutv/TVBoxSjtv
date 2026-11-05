@@ -30,7 +30,7 @@ public class FastSearchAdapter extends BaseQuickAdapter<Movie.Video, BaseViewHol
         if (item.note != null && !item.note.isEmpty()) helper.setText(R.id.tvNote, item.note);
         ImageView ivThumb = helper.getView(R.id.ivThumb);
         if (!TextUtils.isEmpty(item.pic)) {
-            ImgUtil.load(item.pic, ivThumb, AutoSizeUtils.mm2px(mContext, 10), AutoSizeUtils.mm2px(mContext, 214), AutoSizeUtils.mm2px(mContext, 280), item.name);
+            ImgUtil.load(item.pic, ivThumb, AutoSizeUtils.dp2px(mContext, 8), AutoSizeUtils.dp2px(mContext, 171), AutoSizeUtils.dp2px(mContext, 224), item.name);
         } else {
             Log.d(TAG, "empty image for item: " + item.name);
             ivThumb.setImageDrawable(ImgUtil.createTextDrawable(item.name));
