@@ -65,13 +65,14 @@
                 android:src="@drawable/icon_clear" />
         </LinearLayout>
 
-        <!-- 金色下划线 indicator -->
+        <!-- 金色下划线 indicator (初始在"历史"下方) -->
         <View
             android:id="@+id/tabIndicator"
             android:layout_width="0dp"
             android:layout_height="2dp"
-            android:layout_marginStart="25%"
-            android:layout_marginEnd="75%"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginLeft="0dp"
             android:background="#FFD4A04C" />
 
         <!-- 删除提示文字 -->
