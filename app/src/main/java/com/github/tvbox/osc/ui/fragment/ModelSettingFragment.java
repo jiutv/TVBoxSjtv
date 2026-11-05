@@ -324,43 +324,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                // 手机上跳配置管理新页面 (图2)
-                if (mActivity.getResources().getBoolean(R.bool.is_phone)) {
-                    startActivity(new Intent(mActivity, ApiConfigActivity.class));
-                    return;
-                }
-                apiDialog = new ApiDialog(mActivity);
-                ApiDialog dialog = apiDialog;
-                EventBus.getDefault().register(dialog);
-                dialog.setOnListener(new ApiDialog.OnListener() {
-                    @Override
-                    public void onchange(String api) {
-                        String oldApi = Hawk.get(HawkConfig.API_URL, "");
-                        Hawk.put(HawkConfig.API_URL, api);
-                        if (!HistoryHelper.isApiLineHistory(api)) {
-                            HistoryHelper.clearApiLineList();
-                        }
-                        tvApi.setText(api);
-                        refreshApiLineText();
-                        if (!oldApi.equals(api)) {
-                            restartAppAfterConfigChanged();
-                        }
-                    }
-
-                    @Override
-                    public void onLocalConfig(boolean live) {
-                        openLocalConfig(live);
-                    }
-                });
-                dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        ((BaseActivity) mActivity).hideSysBar();
-                        EventBus.getDefault().unregister(dialog);
-                        apiDialog = null;
-                    }
-                });
-                dialog.show();
+                startActivity(new Intent(mActivity, ApiConfigActivity.class));
             }
         });
 
@@ -368,44 +332,7 @@ public class ModelSettingFragment extends BaseLazyFragment {
             @Override
             public void onClick(View v) {
                 FastClickCheckUtil.check(v);
-                // 手机上跳订阅管理页 (点播订阅 Tab 包含所有 API_HISTORY 数据)
-                if (mActivity.getResources().getBoolean(R.bool.is_phone)) {
-                    startActivity(new Intent(mActivity, ApiConfigActivity.class));
-                    return;
-                }
-                ArrayList<String> history = Hawk.get(HawkConfig.API_HISTORY, new ArrayList<String>());
-                if (history.isEmpty())
-                    return;
-                String current = Hawk.get(HawkConfig.API_URL, "");
-                int idx = 0;
-                if (history.contains(current))
-                    idx = history.indexOf(current);
-                ApiHistoryDialog dialog = new ApiHistoryDialog(mActivity);
-                dialog.setTip("历史配置列表");
-                dialog.setAdapter(new ApiHistoryDialogAdapter.SelectDialogInterface() {
-                    @Override
-                    public void click(String value) {
-                        String oldApi = Hawk.get(HawkConfig.API_URL, "");
-                        if (!HistoryHelper.isApiLineHistory(value)) {
-                            HistoryHelper.clearApiLineList();
-                        }
-                        Hawk.put(HawkConfig.API_URL, value);
-                        Hawk.put(HawkConfig.LIVE_API_URL, value);
-                        HistoryHelper.setLiveApiHistory(value);
-                        tvApi.setText(value);
-                        refreshApiLineText();
-                        dialog.dismiss();
-                        if (!oldApi.equals(value)) {
-                            restartAppAfterConfigChanged();
-                        }
-                    }
-
-                    @Override
-                    public void del(String value, ArrayList<String> data) {
-                        Hawk.put(HawkConfig.API_HISTORY, data);
-                    }
-                }, history, idx);
-                dialog.show();
+                startActivity(new Intent(mActivity, ApiConfigActivity.class));
             }
         });
 

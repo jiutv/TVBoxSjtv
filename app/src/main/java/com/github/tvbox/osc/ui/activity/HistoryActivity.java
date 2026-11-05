@@ -42,7 +42,6 @@ public class HistoryActivity extends BaseActivity {
     private boolean delMode = false;
 
     // 手机版 Tab 切换相关
-    private boolean isPhoneMode;
     private TextView tabHistory;
     private TextView tabCollect;
     private View tabIndicator;
@@ -60,7 +59,6 @@ public class HistoryActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        isPhoneMode = getResources().getBoolean(R.bool.is_phone);
         initView();
         initData();
     }
@@ -75,26 +73,24 @@ public class HistoryActivity extends BaseActivity {
 
     private void switchTab(boolean toCollect) {
         showCollect = toCollect;
-        if (isPhoneMode) {
-            if (showCollect) {
-                tabCollect.setTextColor(0xFFFFFFFF);
-                tabCollect.setTypeface(null, android.graphics.Typeface.BOLD);
-                tabHistory.setTextColor(0x99FFFFFF);
-                tabHistory.setTypeface(null, android.graphics.Typeface.NORMAL);
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabIndicator.getLayoutParams();
-                lp.leftMargin = tabHistory.getWidth(); // 约一半位置
-                lp.width = tabCollect.getWidth();
-                tabIndicator.setLayoutParams(lp);
-            } else {
-                tabHistory.setTextColor(0xFFFFFFFF);
-                tabHistory.setTypeface(null, android.graphics.Typeface.BOLD);
-                tabCollect.setTextColor(0x99FFFFFF);
-                tabCollect.setTypeface(null, android.graphics.Typeface.NORMAL);
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabIndicator.getLayoutParams();
-                lp.leftMargin = 0;
-                lp.width = tabHistory.getWidth();
-                tabIndicator.setLayoutParams(lp);
-            }
+        if (showCollect) {
+            tabCollect.setTextColor(0xFFFFFFFF);
+            tabCollect.setTypeface(null, android.graphics.Typeface.BOLD);
+            tabHistory.setTextColor(0x99FFFFFF);
+            tabHistory.setTypeface(null, android.graphics.Typeface.NORMAL);
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabIndicator.getLayoutParams();
+            lp.leftMargin = tabHistory.getWidth(); // 约一半位置
+            lp.width = tabCollect.getWidth();
+            tabIndicator.setLayoutParams(lp);
+        } else {
+            tabHistory.setTextColor(0xFFFFFFFF);
+            tabHistory.setTypeface(null, android.graphics.Typeface.BOLD);
+            tabCollect.setTextColor(0x99FFFFFF);
+            tabCollect.setTypeface(null, android.graphics.Typeface.NORMAL);
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabIndicator.getLayoutParams();
+            lp.leftMargin = 0;
+            lp.width = tabHistory.getWidth();
+            tabIndicator.setLayoutParams(lp);
         }
         initData();
     }
@@ -107,27 +103,25 @@ public class HistoryActivity extends BaseActivity {
         mGridView = findViewById(R.id.mGridView);
         mGridView.setHasFixedSize(true);
 
-        int spanCount = isPhoneMode ? 3 : (isBaseOnWidth() ? 5 : 6);
+        int spanCount = 3;
         mGridView.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
 
         historyAdapter = new HistoryAdapter();
         collectAdapter = new CollectAdapter();
 
-        mGridView.setAdapter(isPhoneMode && showCollect ? collectAdapter : historyAdapter);
+        mGridView.setAdapter(showCollect ? collectAdapter : historyAdapter);
 
-        if (isPhoneMode) {
-            tabHistory = findViewById(R.id.tabHistory);
-            tabCollect = findViewById(R.id.tabCollect);
-            tabIndicator = findViewById(R.id.tabIndicator);
-            if (tabHistory != null) {
-                tabHistory.setOnClickListener(v -> switchTab(false));
-                tabCollect.setOnClickListener(v -> switchTab(true));
-            }
+        tabHistory = findViewById(R.id.tabHistory);
+        tabCollect = findViewById(R.id.tabCollect);
+        tabIndicator = findViewById(R.id.tabIndicator);
+        if (tabHistory != null) {
+            tabHistory.setOnClickListener(v -> switchTab(false));
+            tabCollect.setOnClickListener(v -> switchTab(true));
         }
 
         tvDelete.setOnClickListener(v -> toggleDelMode());
         tvClear.setOnClickListener(v -> {
-            if (isPhoneMode && showCollect) {
+            if (showCollect) {
                 ConfirmClearDialog dialog = new ConfirmClearDialog(mContext, "Collect");
                 dialog.show();
             } else {
@@ -235,7 +229,7 @@ public class HistoryActivity extends BaseActivity {
     }
 
     private void initData() {
-        if (isPhoneMode && showCollect) {
+        if (showCollect) {
             // 收藏数据
             List<VodCollect> list = RoomDataManger.getAllVodCollect();
             collectAdapter.setNewData(list);

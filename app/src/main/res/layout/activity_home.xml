@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 手机版 HomeActivity — 底部导航 5 个 (去掉推送), 去掉时间/网络 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FF121212">
 
-    <!-- 顶部区：站点名 + 搜索 + 站点切换 + 分类Tab -->
+    <!-- 顶部区：站点名 + 搜索 + 分类Tab -->
     <LinearLayout
         android:id="@+id/topLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="4dp"
         android:orientation="vertical"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,7 +23,7 @@
         <LinearLayout
             android:id="@+id/topRow1"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="32dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -40,7 +40,7 @@
                 android:text="加载中..."
                 android:textAlignment="gravity"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/ts_20"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -52,10 +52,10 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:text="站点"
                 android:textColor="#BBFFFFFF"
                 android:textSize="12sp" />
@@ -70,10 +70,10 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:gravity="center"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:text="搜索"
                 android:textColor="#BBFFFFFF"
                 android:textSize="12sp" />
@@ -85,16 +85,16 @@
             android:id="@+id/mGridView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="4dp"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             app:tv_selectedItemIsCentered="true" />
 
     </LinearLayout>
 
-    <!-- 内容区（顶栏和底部导航之间） -->
+    <!-- 内容区 -->
     <LinearLayout
         android:id="@+id/contentLayout"
         android:layout_width="0dp"
@@ -113,7 +113,7 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <!-- 底部导航栏：历史 收藏 直播 推送 设置 -->
+    <!-- 底部导航栏：首页 / 历史 / 直播 / 设置 (去掉推送, 去掉收藏 → 合并到历史) -->
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
@@ -122,210 +122,41 @@
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingTop="6dp"
-        android:paddingBottom="6dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
         <!-- 首页 -->
-        <LinearLayout
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_nav_focus"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="6dp"
-            android:paddingBottom="4dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="首页"
-                android:src="@drawable/ic_home" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="首页"
-                android:textColor="#BBFFFFFF"
-                android:textSize="11sp" />
-
+        <LinearLayout android:id="@+id/btnHome" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="@drawable/button_nav_focus" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:gravity="center" android:orientation="vertical" android:paddingTop="6dp" android:paddingBottom="4dp">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:contentDescription="首页" android:src="@drawable/ic_home" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="首页" android:textColor="#BBFFFFFF" android:textSize="11sp" />
         </LinearLayout>
 
-        <!-- 历史 -->
-        <LinearLayout
-            android:id="@+id/btnHistory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_nav_focus"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="6dp"
-            android:paddingBottom="4dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="历史"
-                android:src="@drawable/icon_history" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="历史"
-                android:textColor="#BBFFFFFF"
-                android:textSize="11sp" />
-
-        </LinearLayout>
-
-        <!-- 收藏 -->
-        <LinearLayout
-            android:id="@+id/btnCollect"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_nav_focus"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="6dp"
-            android:paddingBottom="4dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="收藏"
-                android:src="@drawable/icon_collect" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="收藏"
-                android:textColor="#BBFFFFFF"
-                android:textSize="11sp" />
-
+        <!-- 历史 (合并了收藏) -->
+        <LinearLayout android:id="@+id/btnHistory" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="@drawable/button_nav_focus" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:gravity="center" android:orientation="vertical" android:paddingTop="6dp" android:paddingBottom="4dp">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:contentDescription="历史" android:src="@drawable/icon_history" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="历史" android:textColor="#BBFFFFFF" android:textSize="11sp" />
         </LinearLayout>
 
         <!-- 直播 -->
-        <LinearLayout
-            android:id="@+id/btnLive"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_nav_focus"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="6dp"
-            android:paddingBottom="4dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="直播"
-                android:src="@drawable/icon_live" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="直播"
-                android:textColor="#BBFFFFFF"
-                android:textSize="11sp" />
-
-        </LinearLayout>
-
-        <!-- 推送 -->
-        <LinearLayout
-            android:id="@+id/btnPush"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_nav_focus"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="6dp"
-            android:paddingBottom="4dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="推送"
-                android:src="@drawable/icon_push" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="推送"
-                android:textColor="#BBFFFFFF"
-                android:textSize="11sp" />
-
+        <LinearLayout android:id="@+id/btnLive" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="@drawable/button_nav_focus" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:gravity="center" android:orientation="vertical" android:paddingTop="6dp" android:paddingBottom="4dp">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:contentDescription="直播" android:src="@drawable/icon_live" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="直播" android:textColor="#BBFFFFFF" android:textSize="11sp" />
         </LinearLayout>
 
         <!-- 设置 -->
-        <LinearLayout
-            android:id="@+id/btnSetting"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_nav_focus"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingTop="6dp"
-            android:paddingBottom="4dp">
-
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:contentDescription="设置"
-                android:src="@drawable/icon_setting" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="设置"
-                android:textColor="#BBFFFFFF"
-                android:textSize="11sp" />
-
+        <LinearLayout android:id="@+id/btnSetting" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:background="@drawable/button_nav_focus" android:clickable="true" android:focusable="true" android:focusableInTouchMode="true" android:gravity="center" android:orientation="vertical" android:paddingTop="6dp" android:paddingBottom="4dp">
+            <ImageView android:layout_width="22dp" android:layout_height="22dp" android:contentDescription="设置" android:src="@drawable/icon_setting" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="设置" android:textColor="#BBFFFFFF" android:textSize="11sp" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- 时间 / 网络图标: 保留但 GONE，避免 Java findViewById NPE -->
-    <TextView
-        android:id="@+id/tvWifi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/tvDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+    <!-- 保留但 GONE — HomeActivity.findViewById 需要, 防 NPE -->
+    <LinearLayout android:id="@+id/btnCollect" android:visibility="gone" android:layout_width="1dp" android:layout_height="1dp" />
+    <LinearLayout android:id="@+id/btnPush" android:visibility="gone" android:layout_width="1dp" android:layout_height="1dp" />
+    <TextView android:id="@+id/tvWifi" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone" />
+    <TextView android:id="@+id/tvDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

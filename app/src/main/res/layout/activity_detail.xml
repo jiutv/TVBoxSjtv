@@ -23,7 +23,7 @@
 
             <FrameLayout
                 android:id="@+id/thumbContainer"
-                android:layout_width="@dimen/vs_480"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/vs_320"
                 android:layout_marginLeft="@dimen/vs_10"
                 android:background="@drawable/shape_detail_thumb_bg">
@@ -39,7 +39,7 @@
 
             <View
                 android:id="@+id/previewPlayerPlace"
-                android:layout_width="@dimen/vs_480"
+                android:layout_width="match_parent"
                 android:layout_height="@dimen/vs_320"
                 android:visibility="gone" />
 
@@ -70,7 +70,7 @@
 
                     <TextView
                         android:id="@+id/tvSite"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/vs_10"
                         android:layout_marginRight="@dimen/vs_10"
@@ -180,7 +180,7 @@
 
                 <Space
                     android:layout_width="wrap_content"
-                    android:layout_height="0mm"
+                    android:layout_height="0dp"
                     android:layout_weight="1" />
 
                 <LinearLayout
@@ -379,7 +379,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/previewPlayer"
-        android:layout_width="@dimen/vs_470"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/vs_300"
         android:layout_marginStart="@dimen/vs_50"
         android:layout_marginLeft="@dimen/vs_50"
@@ -390,7 +390,7 @@
 
     <View
         android:id="@+id/previewPlayerBlock"
-        android:layout_width="@dimen/vs_470"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/vs_300"
         android:focusable="true"
         android:nextFocusDown="@id/mGridViewFlag"

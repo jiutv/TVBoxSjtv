@@ -203,7 +203,7 @@ public class GridFragment extends BaseLazyFragment {
             mGridView.setLayoutManager(new V7LinearLayoutManager(this.mContext, 1, false));
         }else{
             // 手机(sw<600dp)=3列，TV(sw>=600dp)=5/6列
-            int spanCount = getResources().getBoolean(R.bool.is_phone) ? 3 : (isBaseOnWidth() ? 5 : 6);
+            int spanCount = 3;
             if (style != null) {
                 spanCount = ImgUtil.spanCountByStyle(style, spanCount);
             }

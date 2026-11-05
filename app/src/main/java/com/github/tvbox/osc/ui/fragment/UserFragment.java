@@ -77,13 +77,12 @@ public class UserFragment extends BaseLazyFragment {
     @Override
     protected void onFragmentResume() {
         super.onFragmentResume();
-        // 手机上强制多行网格 (3列), TV 保持 HOME_REC_STYLE 开关
-        boolean isPhone = getResources().getBoolean(R.bool.is_phone);
-        boolean multiRow = isPhone || Hawk.get(HawkConfig.HOME_REC_STYLE, true);
+        // 手机上强制多行网格 (3列)
+        boolean multiRow = true;
         if (multiRow) {
             tvHotList.setVisibility(View.VISIBLE);
             tvHotList.setHasFixedSize(true);
-            int spanCount = isPhone ? 3 : 5;
+            int spanCount = 3;
             if(style!=null && Hawk.get(HawkConfig.HOME_REC, HawkConfig.DEFAULT_HOME_REC) == 1)spanCount=ImgUtil.spanCountByStyle(style,spanCount);
             tvHotList.setLayoutManager(new V7GridLayoutManager(this.mContext, spanCount));
             int paddingLeft = -tvHotList.mHorizontalSpacingWithMargins / 2 + getResources().getDimensionPixelSize(R.dimen.vs_6);

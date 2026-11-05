@@ -338,25 +338,23 @@ public class LivePlayActivity extends BaseActivity {
             ll_epg.setVisibility(View.VISIBLE);
         }
 
-        // 手机端: 隐藏所有 TV 专用面板, 让视频全屏显示
-        if (getResources().getBoolean(R.bool.is_phone)) {
-            if (tvLeftChannelListLayout != null)
-                tvLeftChannelListLayout.setVisibility(View.GONE);
-            if (tvRightSettingLayout != null)
-                tvRightSettingLayout.setVisibility(View.GONE);
-            if (ll_epg != null)
-                ll_epg.setVisibility(View.GONE);
-            if (backcontroller != null)
-                backcontroller.setVisibility(View.VISIBLE);
-            if (tv_shownum != null) tv_shownum.setVisibility(View.GONE);
-            if (tv_showTime != null) tv_showTime.setVisibility(View.GONE);
-            if (tvTime != null) tvTime.setVisibility(View.GONE);
-            if (tvNetSpeed != null) tvNetSpeed.setVisibility(View.GONE);
-            if (tvResolution != null) tvResolution.setVisibility(View.GONE);
-            if (tvChannelInfo != null) tvChannelInfo.setVisibility(View.GONE);
-            if (ll_right_top_loading != null) ll_right_top_loading.setVisibility(View.GONE);
-            if (ll_right_top_huikan != null) ll_right_top_huikan.setVisibility(View.GONE);
-        }
+        // 隐藏所有 TV 专用面板, 让视频全屏显示
+        if (tvLeftChannelListLayout != null)
+            tvLeftChannelListLayout.setVisibility(View.GONE);
+        if (tvRightSettingLayout != null)
+            tvRightSettingLayout.setVisibility(View.GONE);
+        if (ll_epg != null)
+            ll_epg.setVisibility(View.GONE);
+        if (backcontroller != null)
+            backcontroller.setVisibility(View.VISIBLE);
+        if (tv_shownum != null) tv_shownum.setVisibility(View.GONE);
+        if (tv_showTime != null) tv_showTime.setVisibility(View.GONE);
+        if (tvTime != null) tvTime.setVisibility(View.GONE);
+        if (tvNetSpeed != null) tvNetSpeed.setVisibility(View.GONE);
+        if (tvResolution != null) tvResolution.setVisibility(View.GONE);
+        if (tvChannelInfo != null) tvChannelInfo.setVisibility(View.GONE);
+        if (ll_right_top_loading != null) ll_right_top_loading.setVisibility(View.GONE);
+        if (ll_right_top_huikan != null) ll_right_top_huikan.setVisibility(View.GONE);
 
 
         iv_play.setOnClickListener(new View.OnClickListener() {
