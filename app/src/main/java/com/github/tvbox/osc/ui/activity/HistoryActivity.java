@@ -194,9 +194,9 @@ public class HistoryActivity extends BaseActivity {
             if (vodCollect == null) return;
             if (delMode) {
                 collectAdapter.remove(position);
-                RoomDataManger.deleteVodCollect(vodCollect.id);
+                RoomDataManger.deleteVodCollect(vodCollect.getId());
             } else {
-                openDetail(vodCollect.vodId, vodCollect.sourceKey, vodCollect.vodName, vodCollect.vodPic);
+                openDetail(vodCollect.vodId, vodCollect.sourceKey, vodCollect.name, vodCollect.pic);
             }
         });
 
@@ -204,7 +204,7 @@ public class HistoryActivity extends BaseActivity {
             VodCollect vodCollect = collectAdapter.getData().get(position);
             if (vodCollect != null) {
                 Bundle bundle = new Bundle();
-                bundle.putString("title", vodCollect.vodName);
+                bundle.putString("title", vodCollect.name);
                 if (Hawk.get(HawkConfig.FAST_SEARCH_MODE, true)) {
                     jumpActivity(FastSearchActivity.class, bundle);
                 } else {
