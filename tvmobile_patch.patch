@@ -1,0 +1,231 @@
+From 08f0e5469e1877760a25e13e575b8a76b9e50de5 Mon Sep 17 00:00:00 2001
+From: jiutv <jiutv@users.noreply.github.com>
+Date: Sat, 7 Nov 2026 02:06:42 +0800
+Subject: [PATCH] =?UTF-8?q?feat:=20=E7=A7=BB=E6=A4=8D=20release=20CI=20?=
+ =?UTF-8?q?=E5=B7=A5=E4=BD=9C=E6=B5=81=20+=20=E4=BF=AE=E5=A4=8D=E7=AD=BE?=
+ =?UTF-8?q?=E5=90=8D=E8=B7=AF=E5=BE=84=20+=20=E6=B7=BB=E5=8A=A0=20TVBoxOSC?=
+ =?UTF-8?q?.jks?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .github/workflows/build.yml | 138 ++++++++++++++++++++++++++++++++++++
+ .github/workflows/test.yml  |  31 --------
+ .gitignore                  |   5 +-
+ app/build.gradle            |   2 +-
+ 4 files changed, 143 insertions(+), 33 deletions(-)
+ create mode 100644 .github/workflows/build.yml
+ delete mode 100644 .github/workflows/test.yml
+
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+new file mode 100644
+index 0000000..42e6f19
+--- /dev/null
++++ b/.github/workflows/build.yml
+@@ -0,0 +1,138 @@
++name: Build & Release TVBoxOS Mobile
++
++permissions:
++  contents: write
++  actions: write
++
++on:
++  push:
++    branches: [main]
++  workflow_dispatch:
++
++jobs:
++  build:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          fetch-depth: 0
++
++      - name: Generate tag
++        id: tag
++        run: |
++          TAG="$(git log --date=format:'%Y%m%d-%H%M' --pretty=format:'%cd' -1)"
++          SHORT="$(git rev-parse --short HEAD)"
++          echo "tag=$TAG-$SHORT" >> $GITHUB_OUTPUT
++          echo "tag=$TAG-$SHORT" >> $GITHUB_ENV
++
++      - name: Setup Java 17 (for sdkmanager)
++        uses: actions/setup-java@v5
++        with:
++          distribution: temurin
++          java-version: '17'
++
++      - name: Setup Android SDK
++        run: |
++          export PATH=$PATH:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools
++          yes | sdkmanager --licenses
++          sdkmanager "platforms;android-33" "build-tools;30.0.3" "build-tools;33.0.2"
++
++      - name: Setup Java 11 (for Gradle build)
++        uses: actions/setup-java@v5
++        with:
++          distribution: temurin
++          java-version: '11'
++
++      - name: Pre-download Gradle 7.5 (mirror fallback)
++        run: |
++          GRADLE_VER="gradle-7.5-bin"
++          GRADLE_HOME="$HOME/.gradle/wrapper/dists/$GRADLE_VER"
++          HASH_DIR=$(echo -n "https://services.gradle.org/distributions/$GRADLE_VER.zip" | sha256sum | cut -c1-8)
++          TARGET="$GRADLE_HOME/$HASH_DIR"
++          if [ -d "$TARGET/gradle-7.5" ]; then
++            echo "✅ Gradle 7.5 已存在"
++          else
++            mkdir -p "$TARGET"
++            cd "$TARGET"
++            for url in \
++              "https://services.gradle.org/distributions/$GRADLE_VER.zip" \
++              "https://mirrors.cloud.tencent.com/gradle/$GRADLE_VER.zip" \
++              "https://mirrors.tuna.tsinghua.edu.cn/gradle/$GRADLE_VER.zip" \
++              "https://mirrors.huaweicloud.com/gradle/$GRADLE_VER.zip"; do
++              echo "  trying: $url"
++              if curl -fsSL --connect-timeout 10 -o "$GRADLE_VER.zip" "$url"; then
++                echo "✅ download ok: $url"
++                break
++              fi
++            done
++            unzip -q "$GRADLE_VER.zip"
++            rm -f "$GRADLE_VER.zip"
++            echo "✅ Gradle 7.5 ready"
++          fi
++
++      - uses: actions/cache@v4
++        with:
++          path: |
++            ~/.gradle/caches
++            ~/.m2/repository
++          key: gradle-build-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
++          restore-keys: |
++            gradle-build-${{ runner.os }}-
++
++      - uses: gradle/actions/setup-gradle@v4
++
++      - name: Prepare build
++        run: |
++          echo "sdk.dir=${ANDROID_HOME}" > local.properties
++          sed -i '/^#org.gradle.jvmargs/s/^#//' gradle.properties
++          echo "local.properties:" && cat local.properties
++          echo "=== gradle.properties tail ===" && tail -5 gradle.properties
++
++      - name: Build With Gradle
++        run: |
++          chmod +x gradlew
++          ./gradlew assembleRelease \
++            --no-build-cache --stacktrace --warning-mode all
++
++      - name: Collect APKs
++        run: |
++          rm -rf apk/
++          mkdir -p apk/
++          echo "===== 🔍 Searching APKs ====="
++          find app/build/outputs/apk -name "*.apk" -print
++          for file in $(find app/build/outputs/apk -name "*.apk" -print); do
++            base=$(basename "$file")
++            new_base="TVBox_${base%.apk}_$tag.apk"
++            echo "  $file → apk/$new_base"
++            cp "$file" "apk/$new_base"
++          done
++          ls -la apk/
++          [ "$(ls apk/*.apk | wc -l)" -gt 0 ] || exit 1
++
++      - uses: actions/upload-artifact@v4
++        if: always()
++        with:
++          name: TVBoxOS-Mobile-$tag
++          path: apk/*
++          if-no-files-found: warn
++
++      - name: Create GitHub Release
++        env:
++          GH_TOKEN: ${{ github.token }}
++        run: |
++          gh release create "mobile-$tag" apk/*.apk \
++            --title "TVBoxOS Mobile $tag" \
++            --target "${{ github.sha }}" \
++            --latest
++
++  cleanup:
++    if: always()
++    needs: build
++    runs-on: ubuntu-latest
++    steps:
++      - uses: Mattraks/delete-workflow-runs@main
++        with:
++          token: ${{ github.token }}
++          repository: ${{ github.repository }}
++          retain_days: 14
++          keep_minimum_runs: 10
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+deleted file mode 100644
+index 9a87f11..0000000
+--- a/.github/workflows/test.yml
++++ /dev/null
+@@ -1,31 +0,0 @@
+-name: Test Build
+-
+-on:
+-#  push:
+-#    branches:
+-#      - main
+-#  pull_request:
+-  workflow_dispatch:
+-
+-jobs:
+-  build:
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v3
+-        with:
+-          fetch-depth: 0
+-      - name: Build With Gradle
+-        run: |
+-          chmod +x gradlew
+-          ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
+-      - name: Prepare App
+-        run: |
+-          mkdir -p ${{ github.workspace }}/apk/
+-          for file in `find ~ -name "*.apk" -print`; do
+-            mv "$file" ${{ github.workspace }}/apk/
+-          done
+-      - name: Upload App To Artifact
+-        uses: actions/upload-artifact@v3
+-        with:
+-          name: com.github.tvbox.osc
+-          path: ${{ github.workspace }}/apk/*
+diff --git a/.gitignore b/.gitignore
+index a454497..ae36804 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -97,4 +97,7 @@ lint/tmp/
+ .idea/
+ /app/release/
+ /.idea/
+-*.jks
+\ No newline at end of file
++*.jks
++local.properties
++*.iml
++.idea/
+diff --git a/app/build.gradle b/app/build.gradle
+index 1988c84..ded9ffa 100644
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -46,7 +46,7 @@ android {
+         config {
+             keyAlias 'TVBoxOSC'
+             keyPassword 'TVBoxOSC'
+-            storeFile file('..\\TVBoxOSC.jks')
++            storeFile file('TVBoxOSC.jks')
+             storePassword 'TVBoxOSC'
+         }
+     }
+-- 
+2.43.0
+
