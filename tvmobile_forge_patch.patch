@@ -1,0 +1,285 @@
+From da2f3c0318c51760a514f51f155626f6fb26d045 Mon Sep 17 00:00:00 2001
+From: jiutv <jiutv@users.noreply.github.com>
+Date: Sat, 7 Nov 2026 02:06:42 +0800
+Subject: [PATCH] =?UTF-8?q?feat:=20=E7=A7=BB=E6=A4=8D=20release=20CI=20?=
+ =?UTF-8?q?=E5=B7=A5=E4=BD=9C=E6=B5=81=20+=20=E4=BF=AE=E5=A4=8D=E7=AD=BE?=
+ =?UTF-8?q?=E5=90=8D=E8=B7=AF=E5=BE=84=20+=20=E6=B7=BB=E5=8A=A0=20TVBoxOSC?=
+ =?UTF-8?q?.jks?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ .github/workflows/TVBoxOSC.jks | Bin 0 -> 2258 bytes
+ .github/workflows/build.yml    | 140 +++++++++++++++++++++++++++++++++
+ .github/workflows/test.yml     |  31 --------
+ .gitignore                     |   5 +-
+ app/build.gradle               |   2 +-
+ 5 files changed, 145 insertions(+), 33 deletions(-)
+ create mode 100644 .github/workflows/TVBoxOSC.jks
+ create mode 100644 .github/workflows/build.yml
+ delete mode 100644 .github/workflows/test.yml
+
+diff --git a/.github/workflows/TVBoxOSC.jks b/.github/workflows/TVBoxOSC.jks
+new file mode 100644
+index 0000000000000000000000000000000000000000..d9ed79a2850d4634196d69a4fc0b8de1cbcaab16
+GIT binary patch
+literal 2258
+zcmc(g`8U)HAIIlAGc++nmdMy5(qkE4%ZMl%L?X$ONM(r-W2vExFqZ0OkbPguzRNnY
+zm7%d*F1aQYL$+urOcKNO-19u=x##o;JU_gDc)x!7ocDR3&wH1-%Y;B6(0u`a3vrj=
+zgb&2~JMV+A1bWId2!sO)lHj`_4=0xbCjbZJp?m<q0fCd?OTixJ)5+<gH4_ull7#gy
+z?MG{*>k&(oSUtSXv5%ErBs5LqeR=FvEp+zoR-ZO#c01o*OvgXjfVoGd7{$G|NMW^X
+z0x@Xp1M!z5gjW?I)vLKx7xl$I8A|ojRl;Z8ggW%+u%}H0G9nhlMYgMzWK7CitIjJW
+z0O5qMxbhCCF0Uo|zF{PNAvAi|q%ME7Q;=v<7hpm99h=L_ZC<&~$I6P(?$(-yJ4^~{
+zky}+ImGdhQ@YGzQHcMx%T*5L{Z*hvn5A8qZE^=1LpO5rLZ8RcSMeW2b>C6kef<wAq
+zSeYUtmeJDo?uJQ-QqNoc$72_3dTG`VM@5_>z~7to@7?9LmC{j3t(9CSJm!0F?zit3
+z2Y#q3x)ay7k%xI9r9mshdgeqLaoL@pU&o-cP8~{!EOWI4TD-iMdcF;W$XDHbcP(Zq
+zkH%ec$LVfmzw{!tHAQpgQemx4>}}N$3RILgCl*ruM`rNcdI^3ltu<&>rq6}_aS?N{
+z#wN*rXb(!b@7T@e_yL_btZ6gpx-c0~F4oKuwV<YdjH}MKX3CUuetFnbAg;1fSU#sd
+z$(F3RwbCRjaUeDk87h@l1=Y~yO>Hk4V%e#&3b)#fH~biJq1M{-F)!Ko4NgwZsnHA2
+zGbd0*QQu*Mo^)_qmtprLgk8m<Y`yzzM0P~;<c94cQZeV1&ynw#KZ(QRUF0syovAY|
+z_b%sz6-8~ek|EUSQ6uh@z`62UaMw=8RTS?e<!$;j7I~pQ%dGmwBM)gR_0^9pl-V#(
+z8N+(~Ajb{*xTc5(mrCzFws-Cb7ytF{vrm(wOXO1Ai&ZTPG0Bk-9~X)53dVkCrY!3m
+zLU(9eUT>P5jO@}Vp3#lV0wwDry%B2ty@H9KXddY5c@~Q+YOyT($dRu%++cFOanDWB
+ztO2FD8o8gUcT`}zW>?Q%k`0q*i}+qseq!b_BjvHpWkT}`Fw`dFeNe%t9w$(2UcXz^
+z&#KQl<df%xAdo-U=3m!}3lFTZm9{*Q;bEVEa2*+V<9)Ms0ePmj**kD73bQrX;^RFw
+z;H)drknBV4f_Ror<b65^e}%+4t=h#SWFHp{b%li5&d@j=f?z!`BqoZEQkrJFbvsZ5
+zlLX!h3JxulJ!ihnn_Wh(E*+e{$wyvHjGWJ|%}JOt8~=Ja+`-(~fte8<A3S=H5lH_G
+zb|kea2)drtl>z3RpLkO@{0%bau1q*;MTRtqahoT8>AieofRiV_y_Vt3N33WkDG0Td
+z87)|R_N|V`X=1G2>$M1rY1&n-#+5~!jO}vtRqi|?p4f4}P$?L#Rqv_9L~@Q9{$@Ed
+zlyu_jxogLEcpyitB|l_1<{yh=&ok^_&`2>n({T%>vJE|s9I@j87{XOz;_2X#cV<LJ
+zZ9ntlEq33xns55~Xa)1rl72tK1D%cz&bl|IYo_9gQt6Bod-IAyIkdxP=u-iB#gzgv
+zrt-_@^c3rzNxibU1@rNcOmB_@cI)UOgW7QMD?dXu9ss)b@oE>Fd=1a=VBdX@slVOp
+z&L3rgEhZn%6$rlg=Zf}I-JWh?h(I=QHLZ}?1`MP@y(;D~$zj~*0;Xaej&95aWEGSK
+zea88~9)~@gecF*E*{#3&z`g9FT<EmVznW!HC5;Z2$DIie;ENPKsz>nW9qqq=BZn;p
+z3u-|iuty*X77mi2p1Ck60ENQM!1Ku<iu0g+lyTH13IMn{AfTTLAIQrIvxajDAgpX~
+z_&{?@{r@7wujs(9i0fCx{VRg~4}lWGC{<NZLscDA!>WOrcETvNe_NIR*#FB-BtZI~
+z(d;h=j0EsPKoY<OB>?~=k1k;<^hdfa1+|kNpQd6zBG-HT5-(MyY$zZJ^VCM1RcXMU
+zT{8}~QwB99DYW~_dlAj1p;m)mJZ2i!PEWr+V!zpdSCr|y(tN61F&&QBrC>Xq)U_1v
+zu_|l^BYbfP(<aMg8w(d*|H`kMkvrVdihJ+dWb7R&(a1cOy6c<D%{p9HW_M#_i4d>e
+zG?LYpTAXZcjT@4zH?;PRz&4)4s+)>s_m&*R(BumWNF@8xeqF+y<e$w`pM;-_nDFiG
+zXiyQQ$){qa*^Jj4TWC>l_4{l$*>*4PbriNvxBPWir=R!j?A8ca$PJT{GfZ=Y>bCw#
+zv*RxGWne?ex(W&dAixVLP!bg1Z;Ln&TnH{WSb59p*?i;DvVZdjd{Aywl_yE!pCRt|
+zYd=H)g8LHdt!lfASH!u|@O+mTW=#VE&Z32hGlv3FZbriD^va=Kqi(H_Jcg;{C)@#d
+z!uo28t?1@9Xo{z(ncDorjBm9Jv{MZ207`>j&*S>g_#{_UUkyIz?0kV$DlXh6Zz?Uf
+zaW-+G#bO}a=Vhp>^2Ups9Hc<kYcJVy!aBv_Kh8WU)U=mTP{9Tn6t5Ud0pacqMtI4P
+z33BK<Rm%XYEb4wL&7}-|6xT0Zl)%Nz9CFKIFsI@-jRX~wdUzCLpJzQH>V3$m+w0Dl
+z_{MwponcBJCabYb&Z^J!d{1@^kt(lTR6RDPzQpkDYPT$L>3|&~2NPD}^Cj27LcYax
+Xw*kCo!?Kj01jvjQb^DSaa3S(9_`Kr*
+
+literal 0
+HcmV?d00001
+
+diff --git a/.github/workflows/build.yml b/.github/workflows/build.yml
+new file mode 100644
+index 0000000..976adeb
+--- /dev/null
++++ b/.github/workflows/build.yml
+@@ -0,0 +1,140 @@
++name: Build & Release TVBoxOS Mobile
++
++permissions:
++  contents: write
++  actions: write
++
++on:
++  push:
++    branches: [main]
++  workflow_dispatch:
++
++jobs:
++  build:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++        with:
++          fetch-depth: 0
++
++      - name: Generate tag
++        id: tag
++        run: |
++          TAG="$(git log --date=format:'%Y%m%d-%H%M' --pretty=format:'%cd' -1)"
++          SHORT="$(git rev-parse --short HEAD)"
++          echo "tag=$TAG-$SHORT" >> $GITHUB_OUTPUT
++          echo "tag=$TAG-$SHORT" >> $GITHUB_ENV
++
++      - name: Setup Java 17 (for sdkmanager)
++        uses: actions/setup-java@v5
++        with:
++          distribution: temurin
++          java-version: '17'
++
++      - name: Setup Android SDK
++        run: |
++          export PATH=$PATH:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools
++          yes | sdkmanager --licenses
++          sdkmanager "platforms;android-33" "build-tools;30.0.3" "build-tools;33.0.2"
++
++      - name: Setup Java 11 (for Gradle build)
++        uses: actions/setup-java@v5
++        with:
++          distribution: temurin
++          java-version: '11'
++
++      - name: Pre-download Gradle 7.5 (mirror fallback)
++        run: |
++          GRADLE_VER="gradle-7.5-bin"
++          GRADLE_HOME="$HOME/.gradle/wrapper/dists/$GRADLE_VER"
++          HASH_DIR=$(echo -n "https://services.gradle.org/distributions/$GRADLE_VER.zip" | sha256sum | cut -c1-8)
++          TARGET="$GRADLE_HOME/$HASH_DIR"
++          if [ -d "$TARGET/gradle-7.5" ]; then
++            echo "✅ Gradle 7.5 已存在"
++          else
++            mkdir -p "$TARGET"
++            cd "$TARGET"
++            for url in \
++              "https://services.gradle.org/distributions/$GRADLE_VER.zip" \
++              "https://mirrors.cloud.tencent.com/gradle/$GRADLE_VER.zip" \
++              "https://mirrors.tuna.tsinghua.edu.cn/gradle/$GRADLE_VER.zip" \
++              "https://mirrors.huaweicloud.com/gradle/$GRADLE_VER.zip"; do
++              echo "  trying: $url"
++              if curl -fsSL --connect-timeout 10 -o "$GRADLE_VER.zip" "$url"; then
++                echo "✅ download ok: $url"
++                break
++              fi
++            done
++            unzip -q "$GRADLE_VER.zip"
++            rm -f "$GRADLE_VER.zip"
++            echo "✅ Gradle 7.5 ready"
++          fi
++
++      - uses: actions/cache@v4
++        with:
++          path: |
++            ~/.gradle/caches
++            ~/.m2/repository
++          key: gradle-build-${{ runner.os }}-${{ hashFiles('**/*.gradle', '**/*.gradle.kts', 'gradle.properties') }}
++          restore-keys: |
++            gradle-build-${{ runner.os }}-
++
++      - uses: gradle/actions/setup-gradle@v4
++
++      - name: Prepare build
++        run: |
++          cp .github/workflows/TVBoxOSC.jks TVBoxOSC.jks
++          echo "sdk.dir=${ANDROID_HOME}" > local.properties
++          sed -i '/^#org.gradle.jvmargs/s/^#//' gradle.properties
++          ls -la TVBoxOSC.jks
++          echo "local.properties:" && cat local.properties
++          echo "=== gradle.properties tail ===" && tail -5 gradle.properties
++
++      - name: Build With Gradle
++        run: |
++          chmod +x gradlew
++          ./gradlew assembleRelease \
++            --no-build-cache --stacktrace --warning-mode all
++
++      - name: Collect APKs
++        run: |
++          rm -rf apk/
++          mkdir -p apk/
++          echo "===== 🔍 Searching APKs ====="
++          find app/build/outputs/apk -name "*.apk" -print
++          for file in $(find app/build/outputs/apk -name "*.apk" -print); do
++            base=$(basename "$file")
++            new_base="TVBox_${base%.apk}_$tag.apk"
++            echo "  $file → apk/$new_base"
++            cp "$file" "apk/$new_base"
++          done
++          ls -la apk/
++          [ "$(ls apk/*.apk | wc -l)" -gt 0 ] || exit 1
++
++      - uses: actions/upload-artifact@v4
++        if: always()
++        with:
++          name: TVBoxOS-Mobile-$tag
++          path: apk/*
++          if-no-files-found: warn
++
++      - name: Create GitHub Release
++        env:
++          GH_TOKEN: ${{ github.token }}
++        run: |
++          gh release create "mobile-$tag" apk/*.apk \
++            --title "TVBoxOS Mobile $tag" \
++            --target "${{ github.sha }}" \
++            --latest
++
++  cleanup:
++    if: always()
++    needs: build
++    runs-on: ubuntu-latest
++    steps:
++      - uses: Mattraks/delete-workflow-runs@main
++        with:
++          token: ${{ github.token }}
++          repository: ${{ github.repository }}
++          retain_days: 14
++          keep_minimum_runs: 10
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+deleted file mode 100644
+index 9a87f11..0000000
+--- a/.github/workflows/test.yml
++++ /dev/null
+@@ -1,31 +0,0 @@
+-name: Test Build
+-
+-on:
+-#  push:
+-#    branches:
+-#      - main
+-#  pull_request:
+-  workflow_dispatch:
+-
+-jobs:
+-  build:
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v3
+-        with:
+-          fetch-depth: 0
+-      - name: Build With Gradle
+-        run: |
+-          chmod +x gradlew
+-          ./gradlew assemblerelease --build-cache --parallel --daemon --warning-mode all
+-      - name: Prepare App
+-        run: |
+-          mkdir -p ${{ github.workspace }}/apk/
+-          for file in `find ~ -name "*.apk" -print`; do
+-            mv "$file" ${{ github.workspace }}/apk/
+-          done
+-      - name: Upload App To Artifact
+-        uses: actions/upload-artifact@v3
+-        with:
+-          name: com.github.tvbox.osc
+-          path: ${{ github.workspace }}/apk/*
+diff --git a/.gitignore b/.gitignore
+index a454497..ae36804 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -97,4 +97,7 @@ lint/tmp/
+ .idea/
+ /app/release/
+ /.idea/
+-*.jks
+\ No newline at end of file
++*.jks
++local.properties
++*.iml
++.idea/
+diff --git a/app/build.gradle b/app/build.gradle
+index 1988c84..98dc4c8 100644
+--- a/app/build.gradle
++++ b/app/build.gradle
+@@ -46,7 +46,7 @@ android {
+         config {
+             keyAlias 'TVBoxOSC'
+             keyPassword 'TVBoxOSC'
+-            storeFile file('..\\TVBoxOSC.jks')
++            storeFile file('../TVBoxOSC.jks')
+             storePassword 'TVBoxOSC'
+         }
+     }
+-- 
+2.43.0
+
