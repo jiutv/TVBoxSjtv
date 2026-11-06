@@ -35,7 +35,8 @@
 # 保留我们使用的四大组件，自定义的Application等等这些类不被混淆
 # 因为这些子类都有可能被外部调用
 -keep public class * extends android.app.Activity
--keep public class * extends android.app.Application.**
+# 注意: android.app.Application (无 .**), 不是 android.app.Application.**
+-keep public class * extends android.app.Application
 -keep public class * extends android.app.Service
 -keep public class * extends android.content.BroadcastReceiver
 -keep public class * extends android.content.ContentProvider
@@ -207,7 +208,11 @@
 -dontwarn com.google.android.exoplayer2.**
 
 # 实体类
-#-keep class com.github.tvbox.osc.bean.** { *; }
+-keep class com.github.tvbox.osc.bean.** { *; }
+# 项目内所有类（TVBox 项目使用大量反射/Gson/JS bridge，必须 keep）
+-keep class com.github.tvbox.** { *; }
+-keep class com.github.catvod.** { *; }
+-keep class com.p2p.** { *; }
 #CardView
 -keep class com.github.tvbox.osc.ui.tv.widget.card.**{*;}
 #ViewObj

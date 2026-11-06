@@ -116,8 +116,12 @@ android {
                 signingConfig signingConfigs.myConfig
             }
         }
+        // ⚠️ minifyEnabled 必须关掉：项目 proguard-rules.pro 大量规则写错（如 Application.**），
+        // R8 在 release 构建会把除 Manifest 直接引用的组件外，所有项目内类（BaseActivity/ApiConfig/
+        // SourceViewModel/Fragment/Adapter...）全部当成 dead code 砍掉，导致启动即闪退。
+        // 如需开启混淆，必须先完整补全 com.github.tvbox.** / com.github.catvod.** / bean 等 keep 规则。
         release {
-            minifyEnabled true
+            minifyEnabled false
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.myConfig
             }
