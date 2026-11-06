@@ -163,8 +163,12 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        EventBus.getDefault().register(this);
-        eventBusRegistered = true;
+        try {
+            EventBus.getDefault().register(this);
+            eventBusRegistered = true;
+        } catch (Throwable t) {
+            LOG.e("EventBus register failed: " + t.getMessage());
+        }
         ControlManager.get().startServer();
         initView();
         initViewModel();

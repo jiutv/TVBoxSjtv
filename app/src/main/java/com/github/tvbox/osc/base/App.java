@@ -40,25 +40,73 @@ public class App extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        initParams();
-        // OKGo
-        OkGoHelper.init(); //台标获取
-        EpgUtil.init();
-        // 初始化Web服务器
-        ControlManager.init(this);
-        //初始化数据库
-        AppDataManager.init();
-        LoadSir.beginBuilder()
-                .addCallback(new EmptyCallback())
-                .addCallback(new LoadingCallback())
-                .commit();
-        AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
-                .setSupportDP(false)
-                .setSupportSP(false)
-                .setSupportSubunits(Subunits.MM);
-        PlayerHelper.init();
-        QuickJSLoader.init();
-        FileUtils.cleanPlayerCache();
+
+        // 每一步都独立 try-catch，确保单个模块异常不会导致整个应用闪退
+        try {
+            initParams();
+        } catch (Throwable t) {
+            LOG.e("initParams failed: " + t.getMessage());
+        }
+
+        try {
+            OkGoHelper.init();
+        } catch (Throwable t) {
+            LOG.e("OkGoHelper.init failed: " + t.getMessage());
+        }
+
+        try {
+            EpgUtil.init();
+        } catch (Throwable t) {
+            LOG.e("EpgUtil.init failed: " + t.getMessage());
+        }
+
+        try {
+            ControlManager.init(this);
+        } catch (Throwable t) {
+            LOG.e("ControlManager.init failed: " + t.getMessage());
+        }
+
+        try {
+            AppDataManager.init();
+        } catch (Throwable t) {
+            LOG.e("AppDataManager.init failed: " + t.getMessage());
+        }
+
+        try {
+            LoadSir.beginBuilder()
+                    .addCallback(new EmptyCallback())
+                    .addCallback(new LoadingCallback())
+                    .commit();
+        } catch (Throwable t) {
+            LOG.e("LoadSir init failed: " + t.getMessage());
+        }
+
+        try {
+            AutoSizeConfig.getInstance().setCustomFragment(true).getUnitsManager()
+                    .setSupportDP(false)
+                    .setSupportSP(false)
+                    .setSupportSubunits(Subunits.MM);
+        } catch (Throwable t) {
+            LOG.e("AutoSizeConfig init failed: " + t.getMessage());
+        }
+
+        try {
+            PlayerHelper.init();
+        } catch (Throwable t) {
+            LOG.e("PlayerHelper.init failed: " + t.getMessage());
+        }
+
+        try {
+            QuickJSLoader.init();
+        } catch (Throwable t) {
+            LOG.e("QuickJSLoader.init failed: " + t.getMessage());
+        }
+
+        try {
+            FileUtils.cleanPlayerCache();
+        } catch (Throwable t) {
+            LOG.e("cleanPlayerCache failed: " + t.getMessage());
+        }
     }
 
     private void initParams() {

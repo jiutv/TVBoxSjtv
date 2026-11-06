@@ -11,6 +11,7 @@ import com.github.tvbox.osc.receiver.PushReceiver;
 import com.github.tvbox.osc.receiver.SearchReceiver;
 import com.github.tvbox.osc.util.HawkConfig;
 import com.github.tvbox.osc.util.HistoryHelper;
+import com.github.tvbox.osc.util.LOG;
 import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
@@ -108,13 +109,26 @@ public class ControlManager {
             });
             try {
                 mServer.start();
-                com.github.catvod.Proxy.set(RemoteServer.serverPort);
-                IjkMediaPlayer.setDotPort(Hawk.get(HawkConfig.DOH_URL, 0) > 0, RemoteServer.serverPort);
-                break;
             } catch (IOException ex) {
                 RemoteServer.serverPort++;
                 mServer.stop();
+                continue;
             }
+
+            // native 库调用单独保护
+            try {
+                com.github.catvod.Proxy.set(RemoteServer.serverPort);
+            } catch (Throwable t) {
+                // Proxy 初始化失败不影响 Web 服务器
+            }
+            try {
+                IjkMediaPlayer.setDotPort(Hawk.get(HawkConfig.DOH_URL, 0) > 0, RemoteServer.serverPort);
+            } catch (UnsatisfiedLinkError | NoClassDefFoundError t) {
+                LOG.e("IjkMediaPlayer.setDotPort failed: " + t.getMessage());
+            } catch (Throwable t) {
+                // 忽略
+            }
+            break;
         } while (RemoteServer.serverPort < 9999);
     }
 

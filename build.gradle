@@ -23,7 +23,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.2'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.22'
-        classpath "com.chaquo.python:gradle:12.0.1"
+        // pyramid 模块已注释（settings.gradle），chaquo 插件不再需要
+        // classpath "com.chaquo.python:gradle:12.0.1"
     }
 }
 
